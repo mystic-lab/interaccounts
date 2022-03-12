@@ -1,7 +1,7 @@
 {
   "key": "osmosis",
   "chain-id": "osmosis",
-  "rpc-addr": "http://127.0.0.1:26657",
+  "rpc-addr": "http://127.0.0.1:16657",
   "account-prefix": "osmo",
   "gas-prices": "0.0025stake",
   "default-denom": "uosmo",

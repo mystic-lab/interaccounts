@@ -132,7 +132,7 @@ start-rly:
 	./network/hermes/start.sh
 
 kill-dev:
-	@echo "Killing agd, osmosisd, gaiad and removing previous data"
+	@echo "Killing osmosisd, gaiad and removing previous data"
 	-@rm -rf ./data
 	-@killall agd 2>/dev/null
 	-@killall osmosisd 2>/dev/null

@@ -23,8 +23,8 @@ $BINARY config add-chains $PWD/network/relayer/interchain-acc-config/chains --ho
 $BINARY config add-paths $PWD/network/relayer/interchain-acc-config/paths --home $CHAIN_DIR/$RELAYER_DIR
 
 echo "Restoring accounts..."
-$BINARY keys restore agoric agoric "$MNEMONIC_1" --home $CHAIN_DIR/$RELAYER_DIR
-$BINARY keys restore osmosis osmosis "$MNEMONIC_2" --home $CHAIN_DIR/$RELAYER_DIR
+$BINARY keys restore agoric agoric "$MNEMONIC_2" --home $CHAIN_DIR/$RELAYER_DIR
+$BINARY keys restore osmosis osmosis "$MNEMONIC_1" --home $CHAIN_DIR/$RELAYER_DIR
 $BINARY keys restore gaia gaia "$MNEMONIC_3" --home $CHAIN_DIR/$RELAYER_DIR
 
 echo "Initializing light clients for all chains..."

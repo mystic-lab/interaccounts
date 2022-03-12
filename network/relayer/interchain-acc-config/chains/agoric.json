@@ -1,10 +1,10 @@
 {
   "key": "agoric",
   "chain-id": "agoric",
-  "rpc-addr": "http://127.0.0.1:16657",
+  "rpc-addr": "http://127.0.0.1:26657",
   "account-prefix": "agoric",
-  "gas-prices": "0.0025stake",
-  "default-denom": "stake",
+  "gas-prices": "0.0025ubld",
+  "default-denom": "ubld",
   "gas-adjustment":1.5,
   "gas":900000,
   "trusting-period": "330h"
