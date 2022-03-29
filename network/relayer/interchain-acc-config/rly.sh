@@ -35,7 +35,9 @@ $BINARY light init gaia -f --home $CHAIN_DIR/$RELAYER_DIR
 echo "Linking all chains..."
 $BINARY tx link agoric-account-osmosis --home $CHAIN_DIR/$RELAYER_DIR
 $BINARY tx link agoric-account-gaia --home $CHAIN_DIR/$RELAYER_DIR
+#$BINARY tx link agoric-account-gaia-transfer --home $CHAIN_DIR/$RELAYER_DIR
 
 echo "Starting to listen relayer..."
 $BINARY start agoric-account-osmosis --home $CHAIN_DIR/$RELAYER_DIR
 $BINARY start agoric-account-gaia --home $CHAIN_DIR/$RELAYER_DIR
+#$BINARY start agoric-account-gaia-transfer --home $CHAIN_DIR/$RELAYER_DIR

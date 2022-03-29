@@ -1,4 +1,4 @@
-// @ts-check
+// @ts-nocheck
 
 import '@agoric/babel-standalone';
 
@@ -10,14 +10,13 @@ import bundleSource from '@endo/bundle-source';
 import { E } from '@endo/eventual-send';
 import { makeFakeVatAdmin } from '@agoric/zoe/tools/fakeVatAdmin.js';
 import { makeZoeKit } from '@agoric/zoe';
-import { AmountMath } from '@agoric/ertp';
 
 const filename = new URL(import.meta.url).pathname;
 const dirname = path.dirname(filename);
 
 const contractPath = `${dirname}/../src/contract.js`;
 
-test('zoe - mint payments', async (t) => {
+test('zoe - send interchain tx', async (t) => {
   const { zoeService } = makeZoeKit(makeFakeVatAdmin().admin);
   const feePurse = E(zoeService).makeFeePurse();
   const zoe = E(zoeService).bindDefaultFeePurse(feePurse);
@@ -30,23 +29,20 @@ test('zoe - mint payments', async (t) => {
 
   const { creatorFacet, instance } = await E(zoe).startInstance(installation);
 
-  // Alice makes an invitation for Bob that will give him 1000 tokens
-  const invitation = E(creatorFacet).makeInvitation();
-
-  // Bob makes an offer using the invitation
-  const seat = E(zoe).offer(invitation);
-
-  const paymentP = E(seat).getPayout('Token');
-
   // Let's get the tokenIssuer from the contract so we can evaluate
   // what we get as our payout
   const publicFacet = E(zoe).getPublicFacet(instance);
-  const tokenIssuer = E(publicFacet).getTokenIssuer();
-  const tokenBrand = await E(tokenIssuer).getBrand();
-
-  const tokens1000 = AmountMath.make(tokenBrand, 1000n);
-  const tokenPayoutAmount = await E(tokenIssuer).getAmountOf(paymentP);
-
-  // Bob got 1000 tokens
-  t.deepEqual(tokenPayoutAmount, tokens1000);
+  msgvalue = {
+    "sender": "osmo1v8ezz6fslyd0rcxm9kh4q8zlwehh6q68mp3t4r",
+    "routes": {
+        "poolId": "1",
+        "tokenOutDenom": "uosmo"
+    },
+    "tokenIn": {
+      "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+      "amount": "10000"
+    },
+    "tokenOutMinAmount": "35573"
+  }
+  const icaPacket = E(publicFacet).makeICAPacket({type: "osmosis/gamm/swap-exact-amount-in", value: msgvalue});
 });
