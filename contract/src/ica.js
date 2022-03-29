@@ -30,6 +30,38 @@ const safeJSONParseObject = s => {
   return obj;
 };
 
+
+/**
+ * Get the IBC connection for Agoric + the chain you are sending ICS-27 tx's to
+ * @param {URL} msg
+ * @returns {Promise<Bytes>}
+ */
+ export const getIBCConnection = async ({
+  type,
+  value,
+}) => {
+  // Asserts/checks
+  assert.typeof(type, 'string', X`Denom ${type} must be a string`);
+  assert.typeof(value, 'string', X`Receiver ${value} must be a string`);
+
+  // Generate the msg.
+  /** @type {Msg} */
+  const txmsg = {
+    type: type,
+    value: value,
+  };
+
+  // Generate the ics27-1 packet.
+  /** @type {ICS27ICAPacket} */
+  const ics27 = {
+    type: BigInt(1),
+    data: JSON.stringify(txmsg),
+    memo: "",
+  };
+
+  return JSON.stringify(ics27);
+};
+
 /**
  * Create an interchain transaction from a msg - {type, value}
  * @param {Msg} msg
