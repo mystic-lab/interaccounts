@@ -1,5 +1,4 @@
 // @ts-check
-import { Nat } from '@agoric/nat';
 import { Far } from '@endo/marshal';
 import { assert, details as X } from '@agoric/assert';
 
@@ -33,7 +32,7 @@ const safeJSONParseObject = s => {
 
 /**
  * Get the IBC connection for Agoric + the chain you are sending ICS-27 tx's to
- * @param {URL} msg
+ * @param {Msg} msg
  * @returns {Promise<Bytes>}
  */
  export const getIBCConnection = async ({
@@ -54,7 +53,7 @@ const safeJSONParseObject = s => {
   // Generate the ics27-1 packet.
   /** @type {ICS27ICAPacket} */
   const ics27 = {
-    type: BigInt(1),
+    type: 1,
     data: JSON.stringify(txmsg),
     memo: "",
   };
@@ -85,7 +84,7 @@ export const makeICS27ICAPacket = async ({
   // Generate the ics27-1 packet.
   /** @type {ICS27ICAPacket} */
   const ics27 = {
-    type: BigInt(1),
+    type: 1,
     data: JSON.stringify(txmsg),
     memo: "",
   };

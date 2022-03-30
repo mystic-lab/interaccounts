@@ -1,6 +1,5 @@
 // @ts-check
 import '@agoric/zoe/exported.js';
-import { AmountMath } from '@agoric/ertp';
 import { Far } from '@endo/marshal';
 import { ICS27ICAProtocol } from './ica.js'
 

@@ -4,9 +4,7 @@
 
 /**
 /**
- * @typedef {string|Buffer|ArrayBuffer} Data
- * @typedef {string} Bytes
- * @typedef {BigInt} Type
+ * @typedef {number} Type
  * @typedef {string} Memo
  * @typedef {string} MsgType
  * @typedef {JSON} MsgValue
