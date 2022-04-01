@@ -41,7 +41,7 @@ export const makeMsg = async ({
 }) => {
   // Asserts/checks
   assert.typeof(type, 'string', X`Denom ${type} must be a string`);
-  assert.typeof(value, 'string', X`Receiver ${value} must be a json string`);
+  assert.typeof(JSON.stringify(value), 'string', X`Receiver ${value} must be serializable into a json string`);
 
   // Generate the msg.
   /** @type {Msg} */
@@ -64,18 +64,18 @@ export const makeMsg = async ({
    */
   for (const msg of msgs) {
     // Asserts/checks
-    assert.typeof(msg, 'string', X`All Msg's must be a string`)
+    assert.typeof(JSON.stringify(msg), 'string', X`All Msg's must be serializable into a json string`)
   };
 
   // Generate the ics27-1 packet.
   /** @type {ICS27ICAPacket} */
   var ics27 = {
     type: 1,
-    data: Buffer.from(JSON.stringify(msgs), 'utf-8'),
+    data: toBytes(JSON.stringify(msgs)),
     memo: "",
   };
 
-  const packet = toBytes(Buffer.from(JSON.stringify(ics27), 'utf-8'))
+  const packet = toBytes(JSON.stringify(ics27))
 
   return packet;
 };

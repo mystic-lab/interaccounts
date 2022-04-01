@@ -33,7 +33,8 @@
     "@endo/marshal": "^0.5.4",
     "@agoric/notifier": "dev",
     "@agoric/store": "dev",
-    "@agoric/zoe": "dev"
+    "@agoric/zoe": "dev",
+    "@agoric/swingset-vat": "dev"
   },
   "ava": {
     "files": [
