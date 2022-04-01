@@ -14,41 +14,34 @@ import {
   makeLoopbackProtocolHandler,
 } from '@agoric/swingset-vat/src/vats/network/index.js';
 import { makeZoeKit } from '@agoric/zoe';
-import { toBytes } from '@agoric/swingset-vat/src/vats/network/bytes.js';
 import { Far } from '@endo/marshal';
+import { makePromiseKit } from '@endo/promise-kit';
 
 const filename = new URL(import.meta.url).pathname;
 const dirname = path.dirname(filename);
 
 const contractPath = `${dirname}/../src/contract.js`;
 
-const network = makeNetworkProtocol(makeLoopbackProtocolHandler());
-
-const portP = E(network).bind('/ibc-hop/connection-0/ibc-port/icahost/ordered/');
-const portName = await E(portP).getLocalAddress();
-
 test('zoe - send interchain tx', async (t) => {
   const { zoeService } = makeZoeKit(makeFakeVatAdmin().admin);
   const feePurse = E(zoeService).makeFeePurse();
   const zoe = E(zoeService).bindDefaultFeePurse(feePurse);
-
   // pack the contract
   const bundle = await bundleSource(contractPath);
-
   // install the contract
   const installation = E(zoe).install(bundle);
+  // Start the contract instance
+  const { instance } = await E(zoe).startInstance(installation);
 
-  const { creatorFacet, instance } = await E(zoe).startInstance(installation);
+  // Create a network protocol to be used for testing
+  const protocol = makeNetworkProtocol(makeLoopbackProtocolHandler());
 
-  // Create connection
-  const connString = JSON.stringify({"version": "ics27-1","controllerConnectionId":"connection-0","hostConnectionId":"connection-0","address":"","encoding":"proto3","txType":"sdk_multi_msg"})
+  const closed = makePromiseKit();
 
-  const connectionHandler = Far('handler', { "infoMessage": (...args) => { console.log(...args) }, "onReceive": (c, p) => { console.log('received packet: ', p); }, "onOpen": (c) => { console.log('opened') } });
-  
-  const conn = await E(portP).connect("/ibc-hop/connection-0/ibc-port/icahost/ordered/" + connString, connectionHandler)  
-
+  // Get public faucet from ICA instance
   const publicFacet = E(zoe).getPublicFacet(instance);
-  const msgvalue = {
+  // Create constant with raw json msg for a GDex swap
+  const raw_msg = {
     "swap_requester_address": "cosmos1v8ezz6fslyd0rcxm9kh4q8zlwehh6q68n6zmr3",
     "pool_id": "5",
     "swap_type_id": 1,
@@ -63,11 +56,48 @@ test('zoe - send interchain tx', async (t) => {
     },
     "order_price": "23.156819999999999737"
   };
-  const msgvaluebuffer = Buffer.from(JSON.stringify(msgvalue), 'utf-8');
-  const msgvaluebytes = toBytes(msgvaluebuffer)
-  const icaPacket = await E(publicFacet).makeICAPacket({type: "liquidity/MsgSwapWithinBatch", value: toBytes(msgvaluebytes)});
+  // Create a swap msg
+  const msg = await E(publicFacet).makeMsg({type: "liquidity/MsgSwapWithinBatch", value: raw_msg});
 
-  const ret = conn.send(toBytes(icaPacket));
+  // Create an ICA packet with the swap msg
+  const send_packet = await E(publicFacet).makeICAPacket([msg]);
 
-  console.log(ret)
+  // Create first port that packet will be sent to
+  const port = await protocol.bind('/loopback/foo');
+
+  /**
+   * Create the listener for the test port
+   * @type {import('../src/vats/network').ListenHandler}
+   */
+  const listener = Far('listener', {
+    async onAccept(_p, _localAddr, _remoteAddr, _listenHandler) {
+      return harden({
+        async onReceive(c, packet, _connectionHandler) {
+          // Check that recieved packet is the packet we created above
+          t.is(`${packet}`, `${send_packet}`, 'expected ping');
+          return 'pingack';
+        },
+      });
+    },
+  });
+  await port.addListener(listener);
+
+  // Create and send packet to first port utilizing port 2
+  const port2 = await protocol.bind('/loopback/bar');
+  await port2.connect(
+    port.getLocalAddress(),
+    Far('opener', {
+      async onOpen(c, localAddr, remoteAddr, _connectionHandler) {
+        t.is(localAddr, '/loopback/bar/nonce/1');
+        t.is(remoteAddr, '/loopback/foo/nonce/2');
+        const pingack = await c.send(send_packet);
+        t.is(pingack, 'pingack', 'expected pingack');
+        closed.resolve();
+      },
+    }),
+  );
+
+  await closed.promise;
+
+  await port.removeListener(listener);
 });

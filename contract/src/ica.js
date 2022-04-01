@@ -1,6 +1,7 @@
 // @ts-check
 import { Far } from '@endo/marshal';
 import { assert, details as X } from '@agoric/assert';
+import { toBytes } from '@agoric/swingset-vat/src/vats/network/bytes.js';
 
 /**
  * @typedef {Object} ICS27ICAPacket
@@ -29,19 +30,18 @@ const safeJSONParseObject = s => {
   return obj;
 };
 
-
 /**
- * Get the IBC connection for Agoric + the chain you are sending ICS-27 tx's to
+ * Create an interchain transaction from a msg - {type, value}
  * @param {Msg} msg
- * @returns {Promise<Bytes>}
+ * @returns {Promise<Msg>}
  */
- export const getIBCConnection = async ({
+export const makeMsg = async ({
   type,
   value,
 }) => {
   // Asserts/checks
   assert.typeof(type, 'string', X`Denom ${type} must be a string`);
-  assert.typeof(value, 'string', X`Receiver ${value} must be a string`);
+  assert.typeof(value, 'string', X`Receiver ${value} must be a json string`);
 
   // Generate the msg.
   /** @type {Msg} */
@@ -49,47 +49,35 @@ const safeJSONParseObject = s => {
     type: type,
     value: value,
   };
-
-  // Generate the ics27-1 packet.
-  /** @type {ICS27ICAPacket} */
-  const ics27 = {
-    type: 1,
-    data: JSON.stringify(txmsg),
-    memo: "",
-  };
-
-  return JSON.stringify(ics27);
+  return txmsg;
 };
 
 /**
  * Create an interchain transaction from a msg - {type, value}
- * @param {Msg} msg
+ * @param {[Msg]} msgs
  * @returns {Promise<Bytes>}
  */
-export const makeICS27ICAPacket = async ({
-  type,
-  value,
-}) => {
-  // Asserts/checks
-  assert.typeof(type, 'string', X`Denom ${type} must be a string`);
-  assert.typeof(value, 'string', X`Receiver ${value} must be a string`);
+ export const makeICS27ICAPacket = async (msgs) => {
 
-  // Generate the msg.
-  /** @type {Msg} */
-  const txmsg = {
-    type: type,
-    value: value,
+    /**
+   * @param {Bytes} msg
+   */
+  for (const msg of msgs) {
+    // Asserts/checks
+    assert.typeof(msg, 'string', X`All Msg's must be a string`)
   };
 
   // Generate the ics27-1 packet.
   /** @type {ICS27ICAPacket} */
-  const ics27 = {
+  var ics27 = {
     type: 1,
-    data: JSON.stringify(txmsg),
+    data: Buffer.from(JSON.stringify(msgs), 'utf-8'),
     memo: "",
   };
 
-  return JSON.stringify(ics27);
+  const packet = toBytes(Buffer.from(JSON.stringify(ics27), 'utf-8'))
+
+  return packet;
 };
 
 /**
@@ -111,6 +99,7 @@ export const assertICS27ICAPacketAck = async ack => {
 
 /** @type {ICAProtocol} */
 export const ICS27ICAProtocol = Far('ics27-1 ICA protocol', {
+  makeICAMsg: makeMsg,
   makeICAPacket: makeICS27ICAPacket,
   assertICAPacketAck: assertICS27ICAPacketAck
 });
