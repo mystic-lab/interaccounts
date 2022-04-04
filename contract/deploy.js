@@ -50,28 +50,12 @@ const installBundle = async (bundleSource, pathResolve, zoe, board) => {
   // To share the installation, we're going to put it in the
   // board. The board is a shared, on-chain object that maps
   // strings to objects.
-  const CONTRACT_NAME = 'fungibleFaucet';
+  const CONTRACT_NAME = 'interaccounts';
   const INSTALLATION_BOARD_ID = await E(board).getId(installation);
   console.log('- SUCCESS! contract code installed on Zoe');
   console.log(`-- Contract Name: ${CONTRACT_NAME}`);
   console.log(`-- Installation Board Id: ${INSTALLATION_BOARD_ID}`);
   return { CONTRACT_NAME, INSTALLATION_BOARD_ID };
-};
-
-/**
- * @param {ERef<Object>} wallet
- * @param {ERef<Object>} faucet
- */
-const sendDeposit = async (wallet, faucet) => {
-  // We must first fund our "feePurse", the purse that we will use to
-  // pay for our interactions with Zoe.
-  const RUNPurse = E(wallet).getPurse(pursePetnames.RUN);
-  const runAmount = await E(RUNPurse).getCurrentAmount();
-  const feePurse = E(faucet).getFeePurse();
-  const feePayment = await E(E(wallet).getPurse(pursePetnames.RUN)).withdraw(
-    runAmount,
-  );
-  await E(feePurse).deposit(feePayment);
 };
 
 /**
@@ -111,7 +95,6 @@ const deployContract = async (homePromise, { bundleSource, pathResolve }) => {
     faucet,
   } = home;
 
-  await sendDeposit(wallet, faucet);
   const { CONTRACT_NAME, INSTALLATION_BOARD_ID } = await installBundle(
     bundleSource,
     pathResolve,

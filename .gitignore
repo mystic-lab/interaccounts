@@ -6,3 +6,4 @@ _agstate/yarn-links/
 ui/.cache/
 ui/dist/
 network/data/*
+dev

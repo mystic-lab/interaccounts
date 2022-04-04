@@ -26,7 +26,7 @@
 /**
  * @typedef {Object} ICAProtocol
  * @property {(msg: Msg) => Promise<Msg>} makeICAMsg
- * @property {(msgs: [Msg]) => Promise<Bytes>} makeICAPacket
+ * @property {(msg: [Msg]) => Promise<Bytes>} makeICAPacket
  * @property {(ack: Bytes) => Promise<void>} assertICAPacketAck
  */
 

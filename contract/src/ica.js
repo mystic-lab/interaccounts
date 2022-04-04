@@ -14,6 +14,19 @@ import { toBytes } from '@agoric/swingset-vat/src/vats/network/bytes.js';
 const ICS27_ICA_SUCCESS_RESULT = 'AQ==';
 
 /**
+ * @param {object} json
+ */
+var JsonToArray = function(json)
+{
+	var str = JSON.stringify(json, null, 0);
+	var ret = new Uint8Array(str.length);
+	for (var i = 0; i < str.length; i++) {
+		ret[i] = str.charCodeAt(i);
+	}
+	return ret
+};
+
+/**
  * @param {string} s
  */
 const safeJSONParseObject = s => {
@@ -53,7 +66,7 @@ export const makeMsg = async ({
 };
 
 /**
- * Create an interchain transaction from a msg - {type, value}
+ * Create an interchain transaction from a list of msg's
  * @param {[Msg]} msgs
  * @returns {Promise<Bytes>}
  */
@@ -63,21 +76,20 @@ export const makeMsg = async ({
    * @param {Bytes} msg
    */
   for (const msg of msgs) {
-    // Asserts/checks
     assert.typeof(JSON.stringify(msg), 'string', X`All Msg's must be serializable into a json string`)
-  };
+  }
 
   // Generate the ics27-1 packet.
   /** @type {ICS27ICAPacket} */
   var ics27 = {
     type: 1,
-    data: toBytes(JSON.stringify(msgs)),
+    data: JsonToArray(msgs),
     memo: "",
   };
+  
+  var packet_array = await toBytes(JsonToArray(ics27));
 
-  const packet = toBytes(JSON.stringify(ics27))
-
-  return packet;
+  return harden(packet_array);
 };
 
 /**
