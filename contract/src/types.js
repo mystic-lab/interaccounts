@@ -2,6 +2,8 @@
 // eslint-disable-next-line spaced-comment
 /// <reference types="ses"/>
 
+import { Tx } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+
 /**
 /**
  * @typedef {number} Type
@@ -25,8 +27,8 @@
 
 /**
  * @typedef {Object} ICAProtocol
- * @property {(msg: Msg) => Promise<Msg>} makeICAMsg
- * @property {(msg: [Msg]) => Promise<Bytes>} makeICAPacket
+ * @property {(msg: Msg) => Promise<Tx>} makeICAMsg
+ * @property {(msg: [Tx]) => Promise<Bytes>} makeICAPacket
  * @property {(ack: Bytes) => Promise<void>} assertICAPacketAck
  */
 

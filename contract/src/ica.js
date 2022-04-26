@@ -1,12 +1,13 @@
 // @ts-check
 import { Far } from '@endo/marshal';
 import { assert, details as X } from '@agoric/assert';
-import { toBytes } from '@agoric/swingset-vat/src/vats/network/bytes.js';
+import { encodeBase64 } from '@endo/base64';
+import { Tx, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 
 /**
- * @typedef {Object} ICS27ICAPacket
+ * @typedef {string} ICS27ICAPacket
  * @property {Type} type The int32 type of the transaction (ICA only supports Type 1)
- * @property {Data} data The byte encoding of a list of messages in {Type: xxx, Value: {}} format
+ * @property {string} data The byte encoding of a list of messages in {Type: xxx, Value: {}} format
  * @property {Memo} memo Optional memo for the tx. Defaults to blank ""
  */
 
@@ -16,8 +17,7 @@ const ICS27_ICA_SUCCESS_RESULT = 'AQ==';
 /**
  * @param {object} json
  */
-var JsonToArray = function(json)
-{
+var JsonToArray = function(json) {
 	var str = JSON.stringify(json, null, 0);
 	var ret = new Uint8Array(str.length);
 	for (var i = 0; i < str.length; i++) {
@@ -44,9 +44,9 @@ const safeJSONParseObject = s => {
 };
 
 /**
- * Create an interchain transaction from a msg - {type, value}
- * @param {Msg} msg
- * @returns {Promise<Msg>}
+ * Create an interchain transaction from {type, value}
+ * @param {import('./types').Msg} msg
+ * @returns {Promise<Tx>}
  */
 export const makeMsg = async ({
   type,
@@ -57,17 +57,20 @@ export const makeMsg = async ({
   assert.typeof(JSON.stringify(value), 'string', X`Receiver ${value} must be serializable into a json string`);
 
   // Generate the msg.
-  /** @type {Msg} */
+  /** @type {import('./types').Msg} */
   const txmsg = {
     type: type,
     value: value,
   };
-  return txmsg;
+
+  const tx = Tx.fromJSON(txmsg)
+
+  return tx;
 };
 
 /**
  * Create an interchain transaction from a list of msg's
- * @param {[Msg]} msgs
+ * @param {[Tx]} msgs
  * @returns {Promise<Bytes>}
  */
  export const makeICS27ICAPacket = async (msgs) => {
@@ -81,15 +84,12 @@ export const makeMsg = async ({
 
   // Generate the ics27-1 packet.
   /** @type {ICS27ICAPacket} */
-  var ics27 = {
+  var packet = JSON.stringify({
     type: 1,
-    data: JsonToArray(msgs),
+    data: encodeBase64(JsonToArray(msgs)),
     memo: "",
-  };
-  
-  var packet_array = await toBytes(JsonToArray(ics27));
-
-  return harden(packet_array);
+  });
+  return harden(packet);
 };
 
 /**
@@ -109,7 +109,7 @@ export const assertICS27ICAPacketAck = async ack => {
   }
 };
 
-/** @type {ICAProtocol} */
+/** @type {import('./types').ICAProtocol} */
 export const ICS27ICAProtocol = Far('ics27-1 ICA protocol', {
   makeICAMsg: makeMsg,
   makeICAPacket: makeICS27ICAPacket,

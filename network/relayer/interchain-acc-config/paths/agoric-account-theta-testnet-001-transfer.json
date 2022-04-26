@@ -4,23 +4,21 @@
       "client-id": "",
       "connection-id": "",
       "channel-id": "",
-      "port-id": "ibcaccount",
+      "port-id": "transfer",
       "order": "ordered",
-      "version": "ics27-1"
+      "version": "ics20-1"
     },
     "dst": {
-      "chain-id": "gaia",
+      "chain-id": "theta-testnet-001",
       "client-id": "",
       "connection-id": "",
       "channel-id": "",
-      "port-id": "ibcaccount",
+      "port-id": "transfer",
       "order": "ordered",
-      "version": "ics27-1"
+      "version": "ics20-1"
     },
     "strategy": {
       "type": "naive"
     }
   }
-  
-  
   

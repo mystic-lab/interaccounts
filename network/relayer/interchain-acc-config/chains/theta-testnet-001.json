@@ -1,0 +1,11 @@
+{
+  "key": "theta-testnet-001",
+  "chain-id": "theta-testnet-001",
+  "rpc-addr": "https://rpc.sentry-01.theta-testnet.polypore.xyz",
+  "account-prefix": "cosmos",
+  "gas-prices": "0.0025uatom",
+  "default-denom": "uatom",
+  "gas-adjustment":1.5,
+  "gas":900000,
+  "trusting-period": "330h"
+}

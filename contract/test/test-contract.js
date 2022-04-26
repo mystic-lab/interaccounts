@@ -74,6 +74,7 @@ test('zoe - send interchain tx', async (t) => {
       return harden({
         async onReceive(c, packet, _connectionHandler) {
           // Check that recieved packet is the packet we created above
+          console.log(packet);
           t.is(`${packet}`, `${send_packet}`, 'expected ping');
           return 'pingack';
         },

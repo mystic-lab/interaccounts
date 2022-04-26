@@ -4,9 +4,8 @@
 BINARY=rly
 CHAIN_DIR=./network/data
 RELAYER_DIR=./relayer
-MNEMONIC_1="alley afraid soup fall idea toss can goose become valve initial strong forward bright dish figure check leopard decide warfare hub unusual join cart"
 MNEMONIC_2="record gift you once hip style during joke field prize dust unique length more pencil transfer quit train device arrive energy sort steak upset"
-MNEMONIC_3="license bulk van praise awake clown annual material direct angry unfair hollow spoil wage peasant tissue gold supreme boost slab parade artwork spawn couch"
+MNEMONIC_3="record gift you once hip style during joke field prize dust unique length more pencil transfer quit train device arrive energy sort steak upset"
 
 # Ensure rly is installed
 if ! [ -x "$(command -v $BINARY)" ]; then
@@ -24,20 +23,16 @@ $BINARY config add-paths $PWD/network/relayer/interchain-acc-config/paths --home
 
 echo "Restoring accounts..."
 $BINARY keys restore agoric agoric "$MNEMONIC_2" --home $CHAIN_DIR/$RELAYER_DIR
-$BINARY keys restore osmosis osmosis "$MNEMONIC_1" --home $CHAIN_DIR/$RELAYER_DIR
-$BINARY keys restore gaia gaia "$MNEMONIC_3" --home $CHAIN_DIR/$RELAYER_DIR
+$BINARY keys restore theta-testnet-001 theta-testnet-001 "$MNEMONIC_3" --home $CHAIN_DIR/$RELAYER_DIR
 
 echo "Initializing light clients for all chains..."
 $BINARY light init agoric -f --home $CHAIN_DIR/$RELAYER_DIR
-$BINARY light init osmosis -f --home $CHAIN_DIR/$RELAYER_DIR
-$BINARY light init gaia -f --home $CHAIN_DIR/$RELAYER_DIR
+$BINARY light init theta-testnet-001 -f --home $CHAIN_DIR/$RELAYER_DIR
 
 echo "Linking all chains..."
-$BINARY tx link agoric-account-osmosis --home $CHAIN_DIR/$RELAYER_DIR
-$BINARY tx link agoric-account-gaia --home $CHAIN_DIR/$RELAYER_DIR
-#$BINARY tx link agoric-account-gaia-transfer --home $CHAIN_DIR/$RELAYER_DIR
+$BINARY tx link agoric-account-theta-testnet-001 --home $CHAIN_DIR/$RELAYER_DIR
+$BINARY tx link agoric-account-theta-testnet-001-transfer --home $CHAIN_DIR/$RELAYER_DIR
 
 echo "Starting to listen relayer..."
-$BINARY start agoric-account-osmosis --home $CHAIN_DIR/$RELAYER_DIR
-$BINARY start agoric-account-gaia --home $CHAIN_DIR/$RELAYER_DIR
-#$BINARY start agoric-account-gaia-transfer --home $CHAIN_DIR/$RELAYER_DIR
+$BINARY start agoric-account-theta-testnet-001 --home $CHAIN_DIR/$RELAYER_DIR
+$BINARY start agoric-account-theta-testnet-001-transfer --home $CHAIN_DIR/$RELAYER_DIR

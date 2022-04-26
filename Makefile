@@ -7,8 +7,6 @@ DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bu
 ###                           Install                                       ###
 ###############################################################################
 install:
-		@echo "--> Installing osmosisd"
-		@bash ./network/osmosis/osmosis.sh
 		@echo "---> Installing gaiad"
 		@bash ./network/cosmos/cosmos.sh
 		@echo "---> Installing Hermes relayer"
@@ -117,9 +115,8 @@ proto-update-deps:
 ###############################################################################
 
 init: kill-dev 
-	@echo "Initializing both blockchains..."
+	@echo "Initializing blockchains..."
 	./network/init.sh
-	./network/start.sh
 	@echo "Initializing relayer..." 
 	./network/hermes/restore-keys.sh
 	./network/hermes/create-conn.sh
@@ -132,8 +129,5 @@ start-rly:
 	./network/hermes/start.sh
 
 kill-dev:
-	@echo "Killing osmosisd, gaiad and removing previous data"
+	@echo "Removing previous data"
 	-@rm -rf ./data
-	-@killall agd 2>/dev/null
-	-@killall osmosisd 2>/dev/null
-	-@killall gaiad 2>/dev/null
