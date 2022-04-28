@@ -2,7 +2,7 @@
   "name": "interaccounts-contract",
   "version": "0.1.0",
   "private": true,
-  "description": "Contract for the Agoric Dapp",
+  "description": "Contract for interchain accoutns (ICS-27)",
   "type": "module",
   "scripts": {
     "build": "exit 0",

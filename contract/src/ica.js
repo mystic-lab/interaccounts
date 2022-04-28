@@ -1,8 +1,8 @@
 // @ts-check
 import { Far } from '@endo/marshal';
 import { assert, details as X } from '@agoric/assert';
-import { encodeBase64 } from '@endo/base64';
-import { Tx, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
+import { toBytes } from '@agoric/swingset-vat/src/vats/network/bytes.js'
+import { Tx, TxBody } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 
 /**
  * @typedef {string} ICS27ICAPacket
@@ -45,51 +45,55 @@ const safeJSONParseObject = s => {
 
 /**
  * Create an interchain transaction from {type, value}
- * @param {import('./types').Msg} msg
- * @returns {Promise<Tx>}
+ * @param {MsgType} typeUrl
+ * @param {MsgValue} value
+ * @returns {Promise<Msg>}
  */
-export const makeMsg = async ({
-  type,
-  value,
-}) => {
+export const makeMsg = async (typeUrl, value) => {
   // Asserts/checks
-  assert.typeof(type, 'string', X`Denom ${type} must be a string`);
+  assert.typeof(typeUrl, 'string', X`Denom ${typeUrl} must be a string`);
   assert.typeof(JSON.stringify(value), 'string', X`Receiver ${value} must be serializable into a json string`);
 
-  // Generate the msg.
-  /** @type {import('./types').Msg} */
   const txmsg = {
-    type: type,
+    typeUrl: typeUrl,
     value: value,
   };
 
-  const tx = Tx.fromJSON(txmsg)
-
-  return tx;
+  return txmsg;
 };
 
 /**
  * Create an interchain transaction from a list of msg's
- * @param {[Tx]} msgs
+ * @param {[Msg]} msgs
  * @returns {Promise<Bytes>}
  */
  export const makeICS27ICAPacket = async (msgs) => {
 
-    /**
-   * @param {Bytes} msg
-   */
-  for (const msg of msgs) {
-    assert.typeof(JSON.stringify(msg), 'string', X`All Msg's must be serializable into a json string`)
-  }
+  const body = TxBody.fromPartial({
+    messages: [
+      {
+        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+        value: JsonToArray(JSON.stringify({
+          "amount": [{ "amount": "1000", "denom": "stake" }],
+          "from_address": "cosmos15ccshhmp0gsx29qpqq6g4zmltnnvgmyu9ueuadh9y2nc5zj0szls5gtddz",
+          "to_address": "cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw"
+        }))
+      }
+    ],
+    memo: ""
+  })
 
   // Generate the ics27-1 packet.
-  /** @type {ICS27ICAPacket} */
-  var packet = JSON.stringify({
+  /** @type {Uint8Array} */
+  var packet = JsonToArray({
     type: 1,
-    data: encodeBase64(JsonToArray(msgs)),
+    data: body,
     memo: "",
   });
-  return harden(packet);
+
+  var send_packet = toBytes(packet);
+
+  return send_packet;
 };
 
 /**
@@ -109,7 +113,7 @@ export const assertICS27ICAPacketAck = async ack => {
   }
 };
 
-/** @type {import('./types').ICAProtocol} */
+/** @type {ICAProtocol} */
 export const ICS27ICAProtocol = Far('ics27-1 ICA protocol', {
   makeICAMsg: makeMsg,
   makeICAPacket: makeICS27ICAPacket,

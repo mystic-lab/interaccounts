@@ -7,3 +7,5 @@ ui/.cache/
 ui/dist/
 network/data/*
 dev
+chain.log
+hermes.log

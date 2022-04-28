@@ -15,7 +15,7 @@ const start = async (zcf) => {
 
   const publicFacet = Far('publicFacet', {
     // Public faucet for anyone to call
-    makeMsg: async (/** @type {Msg} */ msg) => await ICS27ICAProtocol.makeICAMsg(msg),
+    makeMsg: async (/** @type {MsgType} */ type, /** @type {MsgValue} */ value) => await ICS27ICAProtocol.makeICAMsg(type, value),
     makeICAPacket: async (/** @type {[Msg]} */ msgs) => await ICS27ICAProtocol.makeICAPacket(msgs),
   });
 
