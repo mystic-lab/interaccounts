@@ -1,13 +1,14 @@
 // @ts-check
 import { Far } from '@endo/marshal';
 import { assert, details as X } from '@agoric/assert';
-import { toBytes } from '@agoric/swingset-vat/src/vats/network/bytes.js'
-import { Tx, TxBody } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { toBytes } from '@agoric/swingset-vat/src/vats/network/bytes.js';
+import { encodeBase64 } from '@endo/base64';
+import { Tx, TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 
 /**
- * @typedef {string} ICS27ICAPacket
+ * @typedef {Object} ICS27ICAPacket
  * @property {Type} type The int32 type of the transaction (ICA only supports Type 1)
- * @property {string} data The byte encoding of a list of messages in {Type: xxx, Value: {}} format
+ * @property {Data} data The byte encoding of a list of messages in {Type: xxx, Value: {}} format
  * @property {Memo} memo Optional memo for the tx. Defaults to blank ""
  */
 
@@ -17,7 +18,8 @@ const ICS27_ICA_SUCCESS_RESULT = 'AQ==';
 /**
  * @param {object} json
  */
-var JsonToArray = function(json) {
+var JsonToArray = function(json)
+{
 	var str = JSON.stringify(json, null, 0);
 	var ret = new Uint8Array(str.length);
 	for (var i = 0; i < str.length; i++) {
@@ -44,21 +46,24 @@ const safeJSONParseObject = s => {
 };
 
 /**
- * Create an interchain transaction from {type, value}
- * @param {MsgType} typeUrl
- * @param {MsgValue} value
+ * Create an interchain transaction from a msg - {type, value}
+ * @param {Msg} msg
  * @returns {Promise<Msg>}
  */
-export const makeMsg = async (typeUrl, value) => {
+export const makeMsg = async ({
+  type,
+  value,
+}) => {
   // Asserts/checks
-  assert.typeof(typeUrl, 'string', X`Denom ${typeUrl} must be a string`);
+  assert.typeof(type, 'string', X`Denom ${type} must be a string`);
   assert.typeof(JSON.stringify(value), 'string', X`Receiver ${value} must be serializable into a json string`);
 
+  // Generate the msg.
+  /** @type {Msg} */
   const txmsg = {
-    typeUrl: typeUrl,
+    type: type,
     value: value,
   };
-
   return txmsg;
 };
 
@@ -69,31 +74,27 @@ export const makeMsg = async (typeUrl, value) => {
  */
  export const makeICS27ICAPacket = async (msgs) => {
 
-  const body = TxBody.fromPartial({
-    messages: [
-      {
-        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
-        value: JsonToArray(JSON.stringify({
-          "amount": [{ "amount": "1000", "denom": "stake" }],
-          "from_address": "cosmos15ccshhmp0gsx29qpqq6g4zmltnnvgmyu9ueuadh9y2nc5zj0szls5gtddz",
-          "to_address": "cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw"
-        }))
-      }
-    ],
+    /**
+   * @param {Bytes} msg
+   */
+  for (const msg of msgs) {
+    assert.typeof(JSON.stringify(msg), 'string', X`All Msg's must be serializable into a json string`)
+  }
+
+  const txbody = {
+    messages: msgs,
     memo: ""
-  })
+  }
 
   // Generate the ics27-1 packet.
-  /** @type {Uint8Array} */
-  var packet = JsonToArray({
+  /** @type {ICS27ICAPacket} */
+  var ics27 = {
     type: 1,
-    data: body,
+    data: encodeBase64(JsonToArray(txbody)),
     memo: "",
-  });
-
-  var send_packet = toBytes(packet);
-
-  return send_packet;
+  };
+  
+  return JSON.stringify(ics27);
 };
 
 /**

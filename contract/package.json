@@ -36,7 +36,8 @@
     "@endo/eventual-send": "^0.14.4",
     "@endo/init": "^0.5.33",
     "@endo/marshal": "^0.5.4",
-    "cosmjs-types": "^0.5.0"
+    "@cosmjs/encoding": "^0.28.4",
+    "cosmjs-types": "latest"
   },
   "ava": {
     "files": [

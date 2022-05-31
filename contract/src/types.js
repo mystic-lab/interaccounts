@@ -13,19 +13,19 @@
 /**
  * @typedef {Object} Packet
  * @property {Type} type
- * @property {Bytes} data
+ * @property {Data} data
  * @property {Memo} memo
  */
 
 /**
  * @typedef {Object} Msg
- * @property {MsgType} typeUrl
+ * @property {MsgType} type
  * @property {MsgValue} value
  */
 
 /**
  * @typedef {Object} ICAProtocol
- * @property {(typeUrl: MsgType, value: MsgValue) => Promise<Msg>} makeICAMsg
+ * @property {(msg: Msg) => Promise<Msg>} makeICAMsg
  * @property {(msg: [Msg]) => Promise<Bytes>} makeICAPacket
  * @property {(ack: Bytes) => Promise<void>} assertICAPacketAck
  */
