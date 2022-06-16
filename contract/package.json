@@ -31,13 +31,16 @@
     "@agoric/store": "dev",
     "@agoric/swingset-vat": "dev",
     "@agoric/zoe": "dev",
+    "@cosmjs/encoding": "^0.28.4",
     "@endo/base64": "^0.2.25",
     "@endo/bundle-source": "^2.2.0",
     "@endo/eventual-send": "^0.15.3",
     "@endo/init": "^0.5.41",
     "@endo/marshal": "^0.6.7",
-    "@cosmjs/encoding": "^0.28.4",
     "cosmjs-types": "agoric-labs/cosmjs-types#Agoric-built"
+  },
+  "resolutions": {
+    "**/protobufjs": "agoric-labs/protobuf.js#Agoric-built"
   },
   "ava": {
     "files": [
