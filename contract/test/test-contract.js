@@ -1,5 +1,4 @@
 // @ts-nocheck
-
 import '@agoric/babel-standalone';
 
 import { test } from '@agoric/zoe/tools/prepare-test-env-ava.js';
@@ -22,7 +21,7 @@ const dirname = path.dirname(filename);
 
 const contractPath = `${dirname}/../src/contract.js`;
 
-test('zoe - send interchain tx', async (t) => {
+const getPublicFacetFromZoe = async t => {
   const { zoeService } = makeZoeKit(makeFakeVatAdmin().admin);
   const feePurse = E(zoeService).makeFeePurse();
   const zoe = E(zoeService).bindDefaultFeePurse(feePurse);
@@ -32,14 +31,16 @@ test('zoe - send interchain tx', async (t) => {
   const installation = E(zoe).install(bundle);
   // Start the contract instance
   const { instance } = await E(zoe).startInstance(installation);
+  return E(zoe).getPublicFacet(instance);
+};
 
+const testPublicFacet = async (t, publicFacet) => {
   // Create a network protocol to be used for testing
   const protocol = makeNetworkProtocol(makeLoopbackProtocolHandler());
 
   const closed = makePromiseKit();
 
   // Get public faucet from ICA instance
-  const publicFacet = E(zoe).getPublicFacet(instance);
   // Create constant with raw json msg for a GDex swap
   const raw_msg = {
     "swap_requester_address": "cosmos1v8ezz6fslyd0rcxm9kh4q8zlwehh6q68n6zmr3",
@@ -100,5 +101,16 @@ test('zoe - send interchain tx', async (t) => {
 
   await closed.promise;
 
-  await port.removeListener(listener);
+  await port.removeListener(listener);  
+};
+
+test('zoe - send interchain tx', async t => {
+  const publicFacet = getPublicFacetFromZoe();
+  await testPublicFacet(t, publicFacet);
+});
+
+test('raw - send interchain tx', async t => {
+  const mod = await import(contractPath);
+  const { publicFacet } = await mod.start();
+  await testPublicFacet(t, publicFacet);
 });
