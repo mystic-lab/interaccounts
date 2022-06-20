@@ -16,19 +16,6 @@ import { Any } from "cosmjs-types/google/protobuf/any.js";
 const ICS27_ICA_SUCCESS_RESULT = 'AQ==';
 
 /**
- * @param {object} json
- */
-var JsonToArray = function(json)
-{
-	var str = JSON.stringify(json, null, 0);
-	var ret = new Uint8Array(str.length);
-	for (var i = 0; i < str.length; i++) {
-		ret[i] = str.charCodeAt(i);
-	}
-	return ret
-};
-
-/**
  * @param {string} s
  */
 const safeJSONParseObject = s => {
