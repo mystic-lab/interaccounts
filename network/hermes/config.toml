@@ -123,12 +123,12 @@ trust_threshold = { numerator = '1', denominator = '3' }
 
 [[chains]]
 id = 'theta-testnet-001'
-rpc_addr = 'https://rpc-theta.interchain.io'
-grpc_addr = 'https://grpc.state-sync-01.theta-testnet.polypore.xyz'
-websocket_addr = 'wss://rpc-theta.interchain.io/websocket'
+rpc_addr = 'http://164.90.146.43:26657/'
+grpc_addr = 'http://164.90.146.43:9090/'
+websocket_addr = 'ws://164.90.146.43:26657/websocket'
 rpc_timeout = '10s'
 account_prefix = 'cosmos'
-key_name = 'testkey'
+key_name = 'rly1'
 store_prefix = 'ibc'
 default_gas = 100000
 max_gas = 3000000

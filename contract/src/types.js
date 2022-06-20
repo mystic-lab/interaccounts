@@ -7,7 +7,7 @@
  * @typedef {number} Type
  * @typedef {string} Memo
  * @typedef {string} MsgType
- * @typedef {JSON} MsgValue
+ * @typedef {Uint8Array} MsgValue
  */
 
 /**
@@ -19,7 +19,7 @@
 
 /**
  * @typedef {Object} Msg
- * @property {MsgType} type
+ * @property {MsgType} typeUrl
  * @property {MsgValue} value
  */
 

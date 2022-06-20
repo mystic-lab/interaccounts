@@ -1,5 +1,6 @@
 // @ts-nocheck
 import '@agoric/babel-standalone';
+import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx.js';
 
 import { test } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 import path from 'path';
@@ -43,22 +44,16 @@ const testPublicFacet = async (t, publicFacet) => {
   // Get public faucet from ICA instance
   // Create constant with raw json msg for a GDex swap
   const raw_msg = {
-    "swap_requester_address": "cosmos1v8ezz6fslyd0rcxm9kh4q8zlwehh6q68n6zmr3",
-    "pool_id": "5",
-    "swap_type_id": 1,
-    "offer_coin": {
-      "denom": "uatom",
-      "amount": "10000"
-    },
-    "demand_coin_denom": "ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86",
-    "offer_coin_fee": {
-      "denom": "uatom",
-      "amount": "15"
-    },
-    "order_price": "23.156819999999999737"
+    amount: [{ denom: 'ubld', amount: '10101010' }],
+    fromAddress: 'cosmos17ndzf5sg9sx2fw8yzzeddxy0hswp0t8r3542p4',
+    toAddress: 'comsos1kh0vh8k0xshkp660dlancdm0s3hl4gd0hfzy5e',
   };
+  const msgType = MsgSend.fromPartial(raw_msg)
+
+  const msgBytes = MsgSend.encode(msgType).finish()
+
   // Create a swap msg
-  const msg = await E(publicFacet).makeMsg({type: "liquidity/MsgSwapWithinBatch", value: raw_msg});
+  const msg = await E(publicFacet).makeMsg({typeUrl: "/cosmos.bank.v1beta1.MsgSend", value: msgBytes});
 
   // Create an ICA packet with the swap msg
   const send_packet = await E(publicFacet).makeICAPacket([msg]);
@@ -103,11 +98,6 @@ const testPublicFacet = async (t, publicFacet) => {
 
   await port.removeListener(listener);  
 };
-
-test('zoe - send interchain tx', async t => {
-  const publicFacet = getPublicFacetFromZoe();
-  await testPublicFacet(t, publicFacet);
-});
 
 test('raw - send interchain tx', async t => {
   const mod = await import(contractPath);

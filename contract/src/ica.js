@@ -1,9 +1,9 @@
 // @ts-check
 import { Far } from '@endo/marshal';
 import { assert, details as X } from '@agoric/assert';
-import { toBytes } from '@agoric/swingset-vat/src/vats/network/bytes.js';
 import { encodeBase64 } from '@endo/base64';
 import { Tx, TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import { Any } from "cosmjs-types/google/protobuf/any.js";
 
 /**
  * @typedef {Object} ICS27ICAPacket
@@ -48,22 +48,22 @@ const safeJSONParseObject = s => {
 /**
  * Create an interchain transaction from a msg - {type, value}
  * @param {Msg} msg
- * @returns {Promise<Msg>}
+ * @returns {Promise<Any>}
  */
 export const makeMsg = async ({
-  type,
+  typeUrl,
   value,
 }) => {
   // Asserts/checks
-  assert.typeof(type, 'string', X`Denom ${type} must be a string`);
+  assert.typeof(typeUrl, 'string', X`typeUrl ${typeUrl} must be a string`);
   assert.typeof(JSON.stringify(value), 'string', X`Receiver ${value} must be serializable into a json string`);
 
   // Generate the msg.
-  /** @type {Msg} */
-  const txmsg = {
-    type: type,
-    value: value,
-  };
+  /** @type {Any} */
+  const txmsg = Any.fromPartial({
+    typeUrl: typeUrl,
+    value: value
+  })
   return txmsg;
 };
 
@@ -74,27 +74,23 @@ export const makeMsg = async ({
  */
  export const makeICS27ICAPacket = async (msgs) => {
 
-    /**
-   * @param {Bytes} msg
-   */
-  for (const msg of msgs) {
-    assert.typeof(JSON.stringify(msg), 'string', X`All Msg's must be serializable into a json string`)
-  }
+  const body = TxBody.fromPartial({
+    messages: Array.from(msgs)
+  })
 
-  const txbody = {
-    messages: msgs,
-    memo: ""
-  }
+  const buf = TxBody.encode(body).finish()
 
   // Generate the ics27-1 packet.
   /** @type {ICS27ICAPacket} */
   var ics27 = {
     type: 1,
-    data: encodeBase64(JsonToArray(txbody)),
+    data: encodeBase64(buf),
     memo: "",
   };
+
+  const packet = JSON.stringify(ics27)
   
-  return JSON.stringify(ics27);
+  return packet;
 };
 
 /**

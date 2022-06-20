@@ -1,4 +1,5 @@
 import { Tx, TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import { encodeBase64, decodeBase64 } from '@endo/base64';
 
 var JsonToArray = function(json)
 {
@@ -29,4 +30,19 @@ const tx = Tx.fromPartial({
 
 const buf = Tx.encode(tx).finish()
 
-console.log(new Uint8Array(buf))
+const encodeVal = encodeBase64(new Uint8Array(buf))
+
+console.log(Buffer.from(decodeBase64(encodeVal), "base64").toString("ascii"))
+
+console.log(Buffer.from(JSON.stringify({
+    messages: [
+        {
+            typeUrl:"/cosmos.bank.v1beta1.MsgSend",
+            value: JsonToArray({
+                "amount": [{"amount":"1000","denom":"stake"}],
+                "from_address":"cosmos15ccshhmp0gsx29qpqq6g4zmltnnvgmyu9ueuadh9y2nc5zj0szls5gtddz",
+                "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw"
+            })
+        }
+    ]
+})).toString("utf-8"))
