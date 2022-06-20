@@ -44,9 +44,9 @@ const testPublicFacet = async (t, publicFacet) => {
   // Get public faucet from ICA instance
   // Create constant with raw json msg for a GDex swap
   const raw_msg = {
-    amount: [{ denom: 'ubld', amount: '10101010' }],
-    fromAddress: 'cosmos17ndzf5sg9sx2fw8yzzeddxy0hswp0t8r3542p4',
-    toAddress: 'comsos1kh0vh8k0xshkp660dlancdm0s3hl4gd0hfzy5e',
+    amount: [{ denom: 'uatom', amount: '450000' }],
+    fromAddress: 'cosmos1h03590djp2jtg7n89pvvak0c73645gpct0nrnzfwhm62vvjzrd5sk20cxg',
+    toAddress: 'cosmos17dtl0mjt3t77kpuhg2edqzjpszulwhgzuj9ljs',
   };
   const msgType = MsgSend.fromPartial(raw_msg)
 
