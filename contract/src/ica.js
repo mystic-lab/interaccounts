@@ -43,7 +43,7 @@ export const makeMsg = async ({
 }) => {
   // Asserts/checks
   assert.typeof(typeUrl, 'string', X`typeUrl ${typeUrl} must be a string`);
-  assert.typeof(JSON.stringify(value), 'string', X`Receiver ${value} must be serializable into a json string`);
+  assert.typeof(Buffer.from(value).toString("base64"), 'string', X`Value must be a proto encoded Uint8Array serializable to base64`);
 
   // Generate the msg.
   /** @type {Any} */

@@ -25,3 +25,7 @@ $BINARY init test --home $CHAIN_DIR/$CHAINID_1 --chain-id=$CHAINID_1
 echo "Adding accounts..."
 echo $DEMO_MNEMONIC_1 | $BINARY keys add demowallet --home $CHAIN_DIR/$CHAINID_1 --recover --keyring-backend=test
 echo $RLY_MNEMONIC_1 | $BINARY keys add rly --home $CHAIN_DIR/$CHAINID_1 --recover --keyring-backend=test 
+
+/workspace/bin/agoric start local-chain >& agoric.log &
+
+$HERMES_BINARY -c $CONFIG_DIR start >& hermes.log &

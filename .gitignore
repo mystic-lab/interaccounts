@@ -9,4 +9,5 @@ network/data/*
 dev
 chain.log
 hermes.log
+agoric.log
 _agstate/
