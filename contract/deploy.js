@@ -4,8 +4,6 @@ import fs from 'fs';
 import '@agoric/zoe/exported.js';
 import { E } from '@endo/eventual-send';
 
-import { pursePetnames } from './petnames.js';
-
 // This script takes our contract code, installs it on Zoe, and makes
 // the installation publicly available. Our backend API script will
 // use this installation in a later step.
@@ -16,11 +14,11 @@ import { pursePetnames } from './petnames.js';
  */
 
 /**
- * @typedef {Object} DeployPowers The special powers that agoric deploy gives us
+ * @typedef {object} DeployPowers The special powers that agoric deploy gives us
  * @property {(path: string) => Promise<{ moduleFormat: string, source: string }>} bundleSource
  * @property {(path: string) => string} pathResolve
  *
- * @typedef {Object} Board
+ * @typedef {object} Board
  * @property {(id: string) => any} getValue
  * @property {(value: any) => string} getId
  * @property {(value: any) => boolean} has
@@ -60,7 +58,7 @@ const installBundle = async (bundleSource, pathResolve, zoe, board) => {
 
 /**
  * @param {Promise<{zoe: ERef<ZoeService>, board: ERef<Board>, agoricNames:
- * Object, wallet: ERef<Object>, faucet: ERef<Object>}>} homePromise
+ * object, wallet: ERef<object>, faucet: ERef<object>}>} homePromise
  * @param {DeployPowers} powers
  */
 const deployContract = async (homePromise, { bundleSource, pathResolve }) => {
@@ -87,12 +85,6 @@ const deployContract = async (homePromise, { bundleSource, pathResolve }) => {
     // have a one-to-one bidirectional mapping. If a value is added a
     // second time, the original id is just returned.
     board,
-
-    // The wallet holds and manages assets for the user.
-    wallet,
-
-    // The faucet provides an initial amount of RUN for the user to use.
-    faucet,
   } = home;
 
   const { CONTRACT_NAME, INSTALLATION_BOARD_ID } = await installBundle(

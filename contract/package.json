@@ -2,7 +2,7 @@
   "name": "interaccounts-contract",
   "version": "0.1.0",
   "private": true,
-  "description": "Contract for interchain accoutns (ICS-27)",
+  "description": "Agoric contract for interchain account (ICS-27)",
   "type": "module",
   "scripts": {
     "build": "exit 0",
@@ -37,6 +37,7 @@
     "@endo/eventual-send": "^0.15.3",
     "@endo/init": "^0.5.41",
     "@endo/marshal": "^0.6.7",
+    "@endo/promise-kit": "^0.2.42",
     "cosmjs-types": "agoric-labs/cosmjs-types#Agoric-built"
   },
   "resolutions": {
@@ -51,14 +52,14 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agoric/agoric"
+    "url": "git+https://github.com/schnetzlerjoe/interaccounts"
   },
-  "author": "Agoric",
+  "author": "Pital",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Agoric/agoric/issues"
+    "url": "https://github.com/schnetzlerjoe/interaccounts/issues"
   },
-  "homepage": "https://github.com/Agoric/agoric#readme",
+  "homepage": "https://github.com/schnetzlerjoe/interaccounts#readme",
   "eslintConfig": {
     "extends": [
       "@agoric"

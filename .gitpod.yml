@@ -4,5 +4,6 @@
 
 tasks:
   - init: yarn install && yarn run build && make
+  - init: export PATH="$PATH:/workspace/bin"
 
 

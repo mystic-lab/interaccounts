@@ -5,15 +5,11 @@ import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx.js';
 import { test } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 import path from 'path';
 
-import bundleSource from '@endo/bundle-source';
-
 import { E } from '@endo/eventual-send';
-import { makeFakeVatAdmin } from '@agoric/zoe/tools/fakeVatAdmin.js';
 import {
   makeNetworkProtocol,
   makeLoopbackProtocolHandler,
 } from '@agoric/swingset-vat/src/vats/network/index.js';
-import { makeZoeKit } from '@agoric/zoe';
 import { Far } from '@endo/marshal';
 import { makePromiseKit } from '@endo/promise-kit';
 
@@ -21,19 +17,6 @@ const filename = new URL(import.meta.url).pathname;
 const dirname = path.dirname(filename);
 
 const contractPath = `${dirname}/../src/contract.js`;
-
-const getPublicFacetFromZoe = async t => {
-  const { zoeService } = makeZoeKit(makeFakeVatAdmin().admin);
-  const feePurse = E(zoeService).makeFeePurse();
-  const zoe = E(zoeService).bindDefaultFeePurse(feePurse);
-  // pack the contract
-  const bundle = await bundleSource(contractPath);
-  // install the contract
-  const installation = E(zoe).install(bundle);
-  // Start the contract instance
-  const { instance } = await E(zoe).startInstance(installation);
-  return E(zoe).getPublicFacet(instance);
-};
 
 const testPublicFacet = async (t, publicFacet) => {
   // Create a network protocol to be used for testing
@@ -43,26 +26,31 @@ const testPublicFacet = async (t, publicFacet) => {
 
   // Get public faucet from ICA instance
   // Create constant with raw json msg for a GDex swap
-  const raw_msg = {
+  const rawMsg = {
     amount: [{ denom: 'uatom', amount: '450000' }],
-    fromAddress: 'cosmos1h03590djp2jtg7n89pvvak0c73645gpct0nrnzfwhm62vvjzrd5sk20cxg',
+    fromAddress:
+      'cosmos1h03590djp2jtg7n89pvvak0c73645gpct0nrnzfwhm62vvjzrd5sk20cxg',
     toAddress: 'cosmos17dtl0mjt3t77kpuhg2edqzjpszulwhgzuj9ljs',
   };
-  const msgType = MsgSend.fromPartial(raw_msg)
+  const msgType = MsgSend.fromPartial(rawMsg);
 
-  const msgBytes = MsgSend.encode(msgType).finish()
+  const msgBytes = MsgSend.encode(msgType).finish();
 
   // Create a swap msg
-  const msg = await E(publicFacet).makeMsg({typeUrl: "/cosmos.bank.v1beta1.MsgSend", value: msgBytes});
+  const msg = await E(publicFacet).makeMsg({
+    typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+    value: msgBytes,
+  });
 
   // Create an ICA packet with the swap msg
-  const send_packet = await E(publicFacet).makeICAPacket([msg]);
+  const sendPacket = await E(publicFacet).makeICAPacket([msg]);
 
   // Create first port that packet will be sent to
   const port = await protocol.bind('/loopback/foo');
 
   /**
    * Create the listener for the test port
+   *
    * @type {import('../src/vats/network').ListenHandler}
    */
   const listener = Far('listener', {
@@ -71,7 +59,7 @@ const testPublicFacet = async (t, publicFacet) => {
         async onReceive(c, packet, _connectionHandler) {
           // Check that recieved packet is the packet we created above
           console.log(packet);
-          t.is(`${packet}`, `${send_packet}`, 'expected ping');
+          t.is(`${packet}`, `${sendPacket}`, 'expected ping');
           return 'pingack';
         },
       });
@@ -87,7 +75,7 @@ const testPublicFacet = async (t, publicFacet) => {
       async onOpen(c, localAddr, remoteAddr, _connectionHandler) {
         t.is(localAddr, '/loopback/bar/nonce/1');
         t.is(remoteAddr, '/loopback/foo/nonce/2');
-        const pingack = await c.send(send_packet);
+        const pingack = await c.send(sendPacket);
         t.is(pingack, 'pingack', 'expected pingack');
         closed.resolve();
       },
@@ -96,10 +84,10 @@ const testPublicFacet = async (t, publicFacet) => {
 
   await closed.promise;
 
-  await port.removeListener(listener);  
+  await port.removeListener(listener);
 };
 
-test('raw - send interchain tx', async t => {
+test('raw - send interchain tx', async (t) => {
   const mod = await import(contractPath);
   const { publicFacet } = await mod.start();
   await testPublicFacet(t, publicFacet);
