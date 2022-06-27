@@ -121,11 +121,12 @@ init: kill-dev
 	./network/init.sh
 	@echo "Initializing relayer..." 
 	./network/hermes/restore-keys.sh
+	./network/hermes/rly-setup.sh
 	./network/hermes/create-conn.sh
 
 start: 
-	@echo "Starting up network"
-	./network/start.sh
+	@echo "Starting up agoric network"
+	./network/agoric/start.sh
 
 start-rly:
 	./network/hermes/start.sh
