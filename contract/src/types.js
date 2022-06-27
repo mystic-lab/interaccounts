@@ -7,8 +7,6 @@
  * @typedef {string} Memo
  * @typedef {string} MsgType
  * @typedef {Uint8Array} MsgValue
- * @typedef {string} Bytes
- * @typedef {Bytes} Data
  */
 
 /**
@@ -29,6 +27,8 @@
  * @property {(msg: Msg) => Promise<Msg>} makeICAMsg
  * @property {(msg: [Msg]) => Promise<Bytes>} makeICAPacket
  * @property {(ack: Bytes) => Promise<void>} assertICAPacketAck
+ * @property {(port: Port, connectionHandler: object, controllerConnectionId: string, hostConnectionId: string) => Promise<Connection>} createICAAccount
+ * @property {(packet: Bytes, connection: Connection) => Promise<string>} sendICAPacket
  */
 
 /**

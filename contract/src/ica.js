@@ -4,7 +4,6 @@ import { assert, details as X } from '@agoric/assert';
 import { encodeBase64 } from '@endo/base64';
 import { TxBody } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Any } from 'cosmjs-types/google/protobuf/any.js';
-import { Buffer } from 'buffer';
 
 /**
  * @typedef {object} ICS27ICAPacket

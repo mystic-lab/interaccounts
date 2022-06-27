@@ -11,6 +11,8 @@ install:
 		@bash ./network/cosmos/cosmos.sh
 		@echo "---> Installing Hermes relayer"
 		@bash ./network/relayer/install.sh
+		@echo "---> Installing Agoric SDK"
+		@bash ./network/agoric/agoric.sh
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
