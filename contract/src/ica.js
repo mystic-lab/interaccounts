@@ -4,6 +4,7 @@ import { assert, details as X } from '@agoric/assert';
 import { encodeBase64 } from '@endo/base64';
 import { TxBody } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Any } from 'cosmjs-types/google/protobuf/any.js';
+import { E } from '@endo/eventual-send';
 
 // As specified in ICS27, the success result is a base64-encoded '\0x1' byte.
 const ICS27_ICA_SUCCESS_RESULT = 'AQ==';
@@ -34,10 +35,11 @@ const safeJSONParseObject = (s) => {
  * @param {string} hostConnectionId
  * @returns {Promise<Connection>}
  */
-export const createICAAccount = (port, connectionHandler, controllerConnectionId, hostConnectionId) => {
+export const createICAAccount = async (port, connectionHandler, controllerConnectionId, hostConnectionId) => {
+    
     const connString = JSON.stringify({"version": "ics27-1","controllerConnectionId": controllerConnectionId,"hostConnectionId": hostConnectionId, "address":"", "encoding":"proto3", "txType":"sdk_multi_msg"})
 
-    const connection = port.connect(
+    const connection = E(port).connect(
       `/ibc-hop/${controllerConnectionId}/ibc-port/icahost/ordered/${connString}`,
       connectionHandler,
     );

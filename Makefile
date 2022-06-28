@@ -132,5 +132,5 @@ start-rly:
 	./network/hermes/start.sh
 
 kill-dev:
-	@echo "Removing previous data"
-	-@rm -rf ./data
+	@echo "Killing all agoric ports"
+	./network/kill.sh
