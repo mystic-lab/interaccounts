@@ -5,13 +5,6 @@ import { encodeBase64 } from '@endo/base64';
 import { TxBody } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Any } from 'cosmjs-types/google/protobuf/any.js';
 
-/**
- * @typedef {object} ICS27ICAPacket
- * @property {Type} type The int32 type of the transaction (ICA only supports Type 1)
- * @property {Data} data The byte encoding of a list of messages in {Type: xxx, Value: {}} format
- * @property {Memo} memo Optional memo for the tx. Defaults to blank ""
- */
-
 // As specified in ICS27, the success result is a base64-encoded '\0x1' byte.
 const ICS27_ICA_SUCCESS_RESULT = 'AQ==';
 
@@ -41,27 +34,15 @@ const safeJSONParseObject = (s) => {
  * @param {string} hostConnectionId
  * @returns {Promise<Connection>}
  */
-export const createICAAccount = async (
-  port,
-  connectionHandler,
-  controllerConnectionId,
-  hostConnectionId,
-) => {
-  const connString = JSON.stringify({
-    version: 'ics27-1',
-    controllerConnectionId,
-    hostConnectionId,
-    address: '',
-    encoding: 'proto3',
-    txType: 'sdk_multi_msg',
-  });
+export const createICAAccount = (port, connectionHandler, controllerConnectionId, hostConnectionId) => {
+    const connString = JSON.stringify({"version": "ics27-1","controllerConnectionId": controllerConnectionId,"hostConnectionId": hostConnectionId, "address":"", "encoding":"proto3", "txType":"sdk_multi_msg"})
 
-  const connection = port.connect(
-    `/ibc-hop/${controllerConnectionId}/ibc-port/icahost/ordered/${connString}`,
-    connectionHandler,
-  );
+    const connection = port.connect(
+      `/ibc-hop/${controllerConnectionId}/ibc-port/icahost/ordered/${connString}`,
+      connectionHandler,
+    );
 
-  return connection;
+    return connection;
 };
 
 /**
@@ -156,6 +137,6 @@ export const ICS27ICAProtocol = Far('ics27-1 ICA protocol', {
   makeICAMsg: makeMsg,
   makeICAPacket: makeICS27ICAPacket,
   assertICAPacketAck: assertICS27ICAPacketAck,
-  createICAAccount,
-  sendICAPacket,
+  sendICAPacket: sendICAPacket,
+  createICS27Account: createICAAccount,
 });

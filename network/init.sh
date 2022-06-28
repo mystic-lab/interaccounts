@@ -26,6 +26,8 @@ echo "Adding accounts..."
 echo $DEMO_MNEMONIC_1 | $BINARY keys add demowallet --home $CHAIN_DIR/$CHAINID_1 --recover --keyring-backend=test
 echo $RLY_MNEMONIC_1 | $BINARY keys add rly --home $CHAIN_DIR/$CHAINID_1 --recover --keyring-backend=test 
 
+echo "y" | echo "record gift you once hip style during joke field prize dust unique length more pencil transfer quit train device arrive energy sort steak upset" | ~/go/bin/agd keys add rly1 --home=_agstate/keys --keyring-backend test --recover
+
 rm hermes.log
 
 $HERMES_BINARY -c $CONFIG_DIR start >& hermes.log &
