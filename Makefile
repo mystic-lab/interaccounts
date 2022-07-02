@@ -116,7 +116,7 @@ proto-update-deps:
 ###                                Initialize                               ###
 ###############################################################################
 
-init: kill-dev 
+init:
 	@echo "Initializing blockchains..."
 	./network/init.sh
 	@echo "Initializing relayer..." 

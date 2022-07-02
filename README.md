@@ -5,6 +5,8 @@ This is the Agoric smart contract for ICS-27 transactions via IBC. You can send 
 ## Getting Started
 You will need to have Golang, NodeJS and Rust installed to get started.
 
+## Installation
+
 ```sh
 git clone https://github.com/schnetzlerjoe/interaccounts
 
@@ -14,32 +16,31 @@ cd interaccounts
 make install
 
 # Start a local Agoric chain
-agoric start local-chain --reset
+make start
 ```
 
-Once the chain starts from above, in a second terminal start the local Agoric solo.
-```sh
-agoric start local-solo 8000 --reset
-```
+## Setup
 
-In a third terminal, start up the other two chains (Gaia and Osmosis) and create an IBC connection to them with the Hermes Relayer
+Keep an eye in agoric.log file. Once Agoric starts up, initialize all the connections and the Hermes relayer
 ```sh
 make init
 ```
 
-Once the process above completes, in the same third terminal from above, start the Hermes Relayer to relay transactions across chains
+Once the process above completes, start the Hermes Relayer to relay transactions across chains. hermes.log tracks all the logs for Hermes
 ```sh
 make start-rly
 ```
 
 ## Deploying the Contract
 
-In a fourth terminal, run the following command to open up the local solo with the repl enabled
+In a seperate terminal, run the following command to start the local-solo. You will have to keep this terminal up running the solo
 ```sh
+agoric start local-solo --reset
+# once local-solo starts up, run
 agoric open --repl
 ```
 
-Once the repl opens, lets deploy the ICS-27 contract to Zoe so we can use it from our repl and our other contracts. Move back to the fourth terminal from above and run the following commands
+Once the repl opens, lets deploy the ICS-27 contract to Zoe so we can use it from our repl and our other contracts. Move back to an open terminal and run the following commands
 ```sh
 # Make sure you are in the base contract directory
 cd ~/interaccounts/contract
@@ -47,32 +48,60 @@ cd ~/interaccounts/contract
 agoric deploy ./deploy.js
 ```
 
+## Get Deployed Contract
+
+Use the ```INSTALLATION_BOARD_ID``` in the file /```interaccounts/ui/public/conf/installationConstants.js``` generated from the contract deployment to get the installation.
+
+```javascript
+// Get installation from board
+installation = E(home.board).getValue(Installation_ID)
+
+// Start the instance from above
+instance = E(home.zoe).startInstance(installation)
+```
+
 ## Setting Up ICA Accounts on Host Chain
+
 In the local solo repl, run the following commands.
 
 ```javascript
-// Get the ibc port objects
+// Get the ibc port objects list
 home.ibcport
-```
-Use the history object from the above command to get the specific port. Grabs the first port from list of ports returned. Keep note of this history number as well for the connect command later on.
-```javascript
-history[0][0]
-```
-Set up the connection string for our version.
-```javascript
-connString = JSON.stringify({"version": "ics27-1","controllerConnectionId":"connection-1","hostConnectionId":"connection-0","address":"","encoding":"proto3","txType":"sdk_multi_msg"})
+// Get a port from the port list
+port = history[0][0]
 ```
 Set up the connection handlers. Feel free to change as you please.
+
 ```javascript
 connectionHandler = Far('handler', { "infoMessage": (...args) => { console.log(...args) }, "onReceive": (c, p) => { console.log('received packet: ', p); }, "onOpen": (c) => { console.log('opened') } });
 ```
-Create the ICA account. The connection object returned is what we will use to send ICA packets to the host chain. Keep track of the history number returned.
+Create the ICA account. The connection object returned is what we will use to send ICA packets to the host chain.
+
+```controllerConnectionId``` = the Agoric connection ID to connect to (string)
+
+```hostConnectionId``` = the counterparty connection ID to connect to (string)
+
 ```javascript
-connection = E(history[1]).connect("/ibc-hop/connection-1/ibc-port/icahost/ordered/" + connString, connectionHandler)
+connection = E(instance.publicFacet).createICAAccount(port, connectionHandler, controllerConnectionId, hostConnectionId)
 ```
 
 ## Sending ICA Transactions
-Use the ```INSTALLATION_BOARD_ID``` in the file /```interaccounts/ui/public/conf/installationConstants.js``` generated from the contract deployment to get the installation.
 ```javascript
-installation = E(home.board).getValue(Installation_ID)
+raw_msg = {
+    "from_address":"cosmos15ccshhmp0gsx29qpqq6g4zmltnnvgmyu9ueuadh9y2nc5zj0szls5gtddz",
+    "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
+    "amount": [
+        {
+            "denom": "stake",
+            "amount": "1000"
+        }
+    ]
+}
+
+// You must use protobuf to encode the raw msg into a uint8array you use for the value input. Look at the test contract to see an example with MsgSend
+msg =  E(instance.publicFacet).makeMsg({type: "/cosmos.bank.v1beta1.MsgSend", value: proto_msg_uint8array})
+
+packet = E(instance.publicFacet).makeICAPacket([msg]);
+
+connection.send(JSON.stringify(packet))
 ```
