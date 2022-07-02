@@ -11,6 +11,8 @@ install:
 		@bash ./network/cosmos/cosmos.sh
 		@echo "---> Installing Hermes relayer"
 		@bash ./network/relayer/install.sh
+		@echo "---> Installing Agoric SDK"
+		@bash ./network/agoric/agoric.sh
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
@@ -114,20 +116,21 @@ proto-update-deps:
 ###                                Initialize                               ###
 ###############################################################################
 
-init: kill-dev 
+init:
 	@echo "Initializing blockchains..."
 	./network/init.sh
 	@echo "Initializing relayer..." 
 	./network/hermes/restore-keys.sh
+	./network/hermes/rly-setup.sh
 	./network/hermes/create-conn.sh
 
 start: 
-	@echo "Starting up network"
-	./network/start.sh
+	@echo "Starting up agoric network"
+	./network/agoric/start.sh
 
 start-rly:
 	./network/hermes/start.sh
 
 kill-dev:
-	@echo "Removing previous data"
-	-@rm -rf ./data
+	@echo "Killing all agoric ports"
+	./network/kill.sh
