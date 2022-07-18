@@ -117,11 +117,11 @@ proto-update-deps:
 ###############################################################################
 
 init:
-	@echo "Initializing blockchains..."
+	@echo "Initializing blockchains & accounts..."
+	./network/hermes/rly-setup.sh
 	./network/init.sh
 	@echo "Initializing relayer..." 
 	./network/hermes/restore-keys.sh
-	./network/hermes/rly-setup.sh
 	./network/hermes/create-conn.sh
 
 start: 
