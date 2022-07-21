@@ -54,11 +54,8 @@ jobs:
         echo "/home/runner/bin" >> $GITHUB_PATH
       working-directory: ./agoric-sdk
 
-    - name: agoric install
-      run: agoric install
-    - name: yarn build
-      run: yarn build
-    - name: yarn lint
-      run: yarn lint
-    - name: yarn test (everything)
-      run: yarn test
+    - name: Setup Agoric and Run Test for Contract
+      run: |
+        agoric install
+        yarn lint
+        yarn test
