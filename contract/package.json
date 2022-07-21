@@ -6,12 +6,12 @@
   "type": "module",
   "scripts": {
     "build": "exit 0",
-    "test": "ava --verbose",
-    "lint": "eslint '**/*.{js,jsx}'",
-    "lint-fix": "eslint --fix '**/*.{js,jsx}'",
-    "lint-check": "eslint '**/*.{js,jsx}'",
-    "lint-fix-jessie": "eslint -c '.eslintrc-jessie.js' --fix '**/*.{js,jsx}'",
-    "lint-check-jessie": "eslint -c '.eslintrc-jessie.js' '**/*.{js,jsx}'"
+    "test": "npx ava --verbose",
+    "lint": "npx eslint '**/*.{js,jsx}'",
+    "lint-fix": "npx eslint --fix '**/*.{js,jsx}'",
+    "lint-check": "npx eslint '**/*.{js,jsx}'",
+    "lint-fix-jessie": "npx eslint -c '.eslintrc-jessie.js' --fix '**/*.{js,jsx}'",
+    "lint-check-jessie": "npx eslint -c '.eslintrc-jessie.js' '**/*.{js,jsx}'"
   },
   "devDependencies": {
     "ava": "^3.13.0",
