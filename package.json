@@ -45,7 +45,8 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "agoric": "dev"
+    "agoric": "dev",
+    "@agoric/babel-standalone": "^7.17.7"
   },
   "ava": {
     "files": [
