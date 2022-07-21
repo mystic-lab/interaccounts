@@ -52,24 +52,25 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/schnetzlerjoe/interaccounts"
+    "url": "git+https://github.com/pital/interaccounts"
   },
   "author": "Pital",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/schnetzlerjoe/interaccounts/issues"
+    "url": "https://github.com/pital/interaccounts/issues"
   },
-  "homepage": "https://github.com/schnetzlerjoe/interaccounts#readme",
-  "eslintConfig": {
-    "extends": [
-      "@agoric"
-    ]
-  },
+  "homepage": "https://github.com/pital/interaccounts#readme",
   "prettier": {
     "trailingComma": "all",
-    "singleQuote": true
-  },
-  "eslintIgnore": [
-    "dappConstants.js"
-  ]
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": [
+          "*.js",
+          "*.cjs",
+          "*.mjs"
+        ]
+      }
+    ]
+  }
 }
