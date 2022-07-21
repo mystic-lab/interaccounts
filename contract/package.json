@@ -2,11 +2,11 @@
   "name": "interaccounts-contract",
   "version": "0.1.0",
   "private": true,
-  "description": "Agoric contract for interchain account (ICS-27)",
+  "description": "Agoric contract for interchain accounts (ICS-27)",
   "type": "module",
   "scripts": {
     "build": "exit 0",
-    "test": "npx ava --verbose",
+    "test": "npx ava ./test/test-contract.js",
     "lint": "npx eslint '**/*.{js,jsx}'",
     "lint-fix": "npx eslint --fix '**/*.{js,jsx}'",
     "lint-check": "npx eslint '**/*.{js,jsx}'",
