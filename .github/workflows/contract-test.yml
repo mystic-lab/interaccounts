@@ -56,7 +56,7 @@ jobs:
 
     - name: Setup Agoric and Run Test for Contract
       run: |
-        cd /home/runner/work/interaccounts/interaccounts
-        agoric install
+        cd ./contract
+        yarn install
         yarn lint
         yarn test
