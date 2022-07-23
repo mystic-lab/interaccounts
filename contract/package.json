@@ -14,6 +14,7 @@
     "lint-check-jessie": "npx eslint -c '.eslintrc-jessie.js' '**/*.{js,jsx}'"
   },
   "devDependencies": {
+    "@agoric/babel-standalone": "^7.17.7",
     "ava": "^3.13.0",
     "eslint": "^7.23.0",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -25,7 +26,6 @@
   },
   "dependencies": {
     "@agoric/assert": "dev",
-    "@agoric/babel-standalone": "^7.17.7",
     "@agoric/ertp": "dev",
     "@agoric/notifier": "dev",
     "@agoric/store": "dev",
