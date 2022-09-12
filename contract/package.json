@@ -52,14 +52,14 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/schnetzlerjoe/interaccounts"
+    "url": "git+https://github.com/pitalco/interaccounts"
   },
   "author": "Pital",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/schnetzlerjoe/interaccounts/issues"
+    "url": "https://github.com/pitalco/interaccounts/issues"
   },
-  "homepage": "https://github.com/schnetzlerjoe/interaccounts#readme",
+  "homepage": "https://github.com/pitalco/interaccounts#readme",
   "eslintConfig": {
     "extends": [
       "@agoric"
