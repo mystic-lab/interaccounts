@@ -58,7 +58,5 @@ jobs:
       run: agoric install
     - name: yarn build
       run: yarn build
-    - name: yarn lint
-      run: yarn lint
     - name: yarn test (everything)
       run: yarn test

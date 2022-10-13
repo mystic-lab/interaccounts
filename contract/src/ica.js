@@ -35,16 +35,27 @@ const safeJSONParseObject = (s) => {
  * @param {string} hostConnectionId
  * @returns {Promise<Connection>}
  */
-export const createICAAccount = async (port, connectionHandler, controllerConnectionId, hostConnectionId) => {
-    
-    const connString = JSON.stringify({"version": "ics27-1","controllerConnectionId": controllerConnectionId,"hostConnectionId": hostConnectionId, "address":"", "encoding":"proto3", "txType":"sdk_multi_msg"})
+export const createICAAccount = async (
+  port,
+  connectionHandler,
+  controllerConnectionId,
+  hostConnectionId,
+) => {
+  const connString = JSON.stringify({
+    version: 'ics27-1',
+    controllerConnectionId,
+    hostConnectionId,
+    address: '',
+    encoding: 'proto3',
+    txType: 'sdk_multi_msg',
+  });
 
-    const connection = await E(port).connect(
-      `/ibc-hop/${controllerConnectionId}/ibc-port/icahost/ordered/${connString}`,
-      connectionHandler,
-    );
+  const connection = await E(port).connect(
+    `/ibc-hop/${controllerConnectionId}/ibc-port/icahost/ordered/${connString}`,
+    connectionHandler,
+  );
 
-    return connection;
+  return connection;
 };
 
 /**
@@ -54,7 +65,7 @@ export const createICAAccount = async (port, connectionHandler, controllerConnec
  * @param {Uint8Array} value
  * @returns {Promise<Any>}
  */
-export const makeMsg = async ( typeUrl, value) => {
+export const makeMsg = async (typeUrl, value) => {
   // Asserts/checks
   assert.typeof(typeUrl, 'string', X`typeUrl ${typeUrl} must be a string`);
 
@@ -62,7 +73,7 @@ export const makeMsg = async ( typeUrl, value) => {
   /** @type {Any} */
   const txmsg = Any.fromPartial({
     typeUrl,
-    value: value,
+    value,
   });
   return txmsg;
 };
@@ -135,6 +146,6 @@ export const ICS27ICAProtocol = Far('ics27-1 ICA protocol', {
   makeICAMsg: makeMsg,
   makeICAPacket: makeICS27ICAPacket,
   assertICAPacketAck: assertICS27ICAPacketAck,
-  sendICAPacket: sendICAPacket,
+  sendICAPacket,
   createICS27Account: createICAAccount,
 });

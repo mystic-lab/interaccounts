@@ -17,7 +17,6 @@ import { E } from '@endo/eventual-send';
  * @typedef {object} DeployPowers The special powers that agoric deploy gives us
  * @property {(path: string) => Promise<{ moduleFormat: string, source: string }>} bundleSource
  * @property {(path: string) => string} pathResolve
- *
  * @typedef {object} Board
  * @property {(id: string) => any} getValue
  * @property {(value: any) => string} getId

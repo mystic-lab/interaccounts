@@ -69,7 +69,7 @@ const testPublicFacet = async (t) => {
       return harden({
         async onReceive(c, packet, _connectionHandler) {
           // Check that recieved packet is the packet we created above
-          console.log("Received Packet on Port 1:", packet);
+          console.log('Received Packet on Port 1:', packet);
           t.is(`${packet}`, `${sendPacket}`, 'expected ping');
           return 'pingack';
         },
@@ -86,7 +86,10 @@ const testPublicFacet = async (t) => {
       async onOpen(c, localAddr, remoteAddr, _connectionHandler) {
         t.is(localAddr, '/loopback/bar/nonce/1');
         t.is(remoteAddr, '/loopback/foo/nonce/2');
-        const pingack = await E(instance.publicFacet).sendICAPacket(sendPacket, c);;
+        const pingack = await E(instance.publicFacet).sendICAPacket(
+          sendPacket,
+          c,
+        );
         t.is(pingack, 'pingack', 'expected pingack');
         closed.resolve();
       },
