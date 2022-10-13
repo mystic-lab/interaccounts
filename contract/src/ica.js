@@ -39,7 +39,7 @@ export const createICAAccount = async (port, connectionHandler, controllerConnec
     
     const connString = JSON.stringify({"version": "ics27-1","controllerConnectionId": controllerConnectionId,"hostConnectionId": hostConnectionId, "address":"", "encoding":"proto3", "txType":"sdk_multi_msg"})
 
-    const connection = E(port).connect(
+    const connection = await E(port).connect(
       `/ibc-hop/${controllerConnectionId}/ibc-port/icahost/ordered/${connString}`,
       connectionHandler,
     );
@@ -50,10 +50,11 @@ export const createICAAccount = async (port, connectionHandler, controllerConnec
 /**
  * Create an interchain transaction from a msg - {type, value}
  *
- * @param {Msg} msg
+ * @param {string} typeUrl
+ * @param {Uint8Array} value
  * @returns {Promise<Any>}
  */
-export const makeMsg = async ({ typeUrl, value }) => {
+export const makeMsg = async ( typeUrl, value) => {
   // Asserts/checks
   assert.typeof(typeUrl, 'string', X`typeUrl ${typeUrl} must be a string`);
 
@@ -61,7 +62,7 @@ export const makeMsg = async ({ typeUrl, value }) => {
   /** @type {Any} */
   const txmsg = Any.fromPartial({
     typeUrl,
-    value,
+    value: harden(value),
   });
   return txmsg;
 };
@@ -69,7 +70,7 @@ export const makeMsg = async ({ typeUrl, value }) => {
 /**
  * Create an interchain transaction from a list of msg's
  *
- * @param {[Msg]} msgs
+ * @param {[{typeUrl: string, value: Uint8Array}]} msgs
  * @returns {Promise<Bytes>}
  */
 export const makeICS27ICAPacket = async (msgs) => {
