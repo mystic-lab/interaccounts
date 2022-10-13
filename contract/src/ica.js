@@ -62,7 +62,7 @@ export const makeMsg = async ( typeUrl, value) => {
   /** @type {Any} */
   const txmsg = Any.fromPartial({
     typeUrl,
-    value: harden(value),
+    value: value,
   });
   return txmsg;
 };

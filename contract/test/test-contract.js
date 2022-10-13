@@ -48,10 +48,10 @@ const testPublicFacet = async (t) => {
   const msgBytes = MsgSend.encode(msgType).finish();
 
   // Create a swap msg
-  const msg = await E(instance.publicFacet).makeMsg({
-    typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-    value: msgBytes,
-  });
+  const msg = await E(instance.publicFacet).makeMsg(
+    '/cosmos.bank.v1beta1.MsgSend',
+    msgBytes,
+  );
 
   // Create an ICA packet with the swap msg
   const sendPacket = await E(instance.publicFacet).makeICAPacket([msg]);
