@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "exit 0",
-    "test": "ava --verbose",
+    "test": "npx ava --verbose",
     "lint": "eslint '**/*.{js,jsx}'",
     "lint-fix": "eslint --fix '**/*.{js,jsx}'",
     "lint-check": "eslint '**/*.{js,jsx}'",

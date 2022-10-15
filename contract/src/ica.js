@@ -39,7 +39,7 @@ export const createICAAccount = async (
 };
 
 /**
- * Provide a connection object and the packet and send ICA Msg's
+ * Provide a connection object and a list of msgs and send them through the ICA channel.
  *
  * @param {[Msg]} msgs
  * @param {Connection} connection
