@@ -73,7 +73,7 @@ port = history[0][0]
 Set up the connection handlers. Feel free to change as you please.
 
 ```javascript
-connectionHandler = Far('handler', { "infoMessage": (...args) => { console.log(...args) }, "onReceive": (c, p) => { console.log('received packet: ', p); }, "onOpen": (c) => { console.log('opened') } });
+let connectionHandler = Far('handler', { "infoMessage": (...args) => { console.log(...args) }, "onReceive": (c, p) => { console.log('received packet: ', p); }, "onOpen": (c) => { console.log('opened') } });
 ```
 Create the ICA account. The connection object returned is what we will use to send ICA packets to the host chain.
 
@@ -82,26 +82,32 @@ Create the ICA account. The connection object returned is what we will use to se
 ```hostConnectionId``` = the counterparty connection ID to connect to (string)
 
 ```javascript
-connection = E(instance.publicFacet).createICAAccount(port, connectionHandler, controllerConnectionId, hostConnectionId)
+const connection = await E(instance.publicFacet).createICAAccount(port, connectionHandler, controllerConnectionId, hostConnectionId)
 ```
 
 ## Sending ICA Transactions
+Please note, you must supply a base64 protobuf encoded message like the below to the sendICAPacket function.
+
 ```javascript
-raw_msg = {
-    "from_address":"cosmos15ccshhmp0gsx29qpqq6g4zmltnnvgmyu9ueuadh9y2nc5zj0szls5gtddz",
-    "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
-    "amount": [
+const rawMsg = {
+    amount: [{ denom: 'uatom', amount: '450000' }],
+    fromAddress:
+        'cosmos1h03590djp2jtg7n89pvvak0c73645gpct0nrnzfwhm62vvjzrd5sk20cxg',
+    toAddress: 'cosmos17dtl0mjt3t77kpuhg2edqzjpszulwhgzuj9ljs',
+};
+const msgType = MsgSend.fromPartial(rawMsg);
+
+const msgBytes = MsgSend.encode(msgType).finish();
+
+const bytesBase64 = encodeBase64(msgBytes);
+
+const res = await E(instance.publicFacet).sendICATxPacket(
+    [
         {
-            "denom": "stake",
-            "amount": "1000"
+            typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+            data: bytesBase64,
         }
-    ]
-}
-
-// You must use protobuf to encode the raw msg into a uint8array you use for the value input. Look at the test contract to see an example with MsgSend
-msg =  E(instance.publicFacet).makeMsg({type: "/cosmos.bank.v1beta1.MsgSend", value: proto_msg_uint8array})
-
-packet = E(instance.publicFacet).makeICAPacket([msg]);
-
-connection.send(JSON.stringify(packet))
+    ],
+    connection,
+);
 ```

@@ -6,6 +6,7 @@ import { test } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 import path from 'path';
 
 import { E } from '@endo/eventual-send';
+import { encodeBase64, decodeBase64 } from '@endo/base64';
 import {
   makeNetworkProtocol,
   makeLoopbackProtocolHandler,
@@ -47,15 +48,6 @@ const testPublicFacet = async (t) => {
 
   const msgBytes = MsgSend.encode(msgType).finish();
 
-  // Create a swap msg
-  const msg = await E(instance.publicFacet).makeMsg(
-    '/cosmos.bank.v1beta1.MsgSend',
-    msgBytes,
-  );
-
-  // Create an ICA packet with the swap msg
-  const sendPacket = await E(instance.publicFacet).makeICAPacket([msg]);
-
   // Create first port that packet will be sent to
   const port = await protocol.bind('/loopback/foo');
 
@@ -70,7 +62,6 @@ const testPublicFacet = async (t) => {
         async onReceive(c, packet, _connectionHandler) {
           // Check that recieved packet is the packet we created above
           console.log('Received Packet on Port 1:', packet);
-          t.is(`${packet}`, `${sendPacket}`, 'expected ping');
           return 'pingack';
         },
       });
@@ -86,8 +77,13 @@ const testPublicFacet = async (t) => {
       async onOpen(c, localAddr, remoteAddr, _connectionHandler) {
         t.is(localAddr, '/loopback/bar/nonce/1');
         t.is(remoteAddr, '/loopback/foo/nonce/2');
-        const pingack = await E(instance.publicFacet).sendICAPacket(
-          sendPacket,
+        const pingack = await E(instance.publicFacet).sendICATxPacket(
+          [
+            {
+              typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+              data: encodeBase64(msgBytes),
+            }
+          ],
           c,
         );
         t.is(pingack, 'pingack', 'expected pingack');

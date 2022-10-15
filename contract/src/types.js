@@ -17,11 +17,14 @@
  */
 
 /**
+ * @typedef {object} Msg
+ * @property {string} typeUrl
+ * @property {string} data
+ */
+
+/**
  * @typedef {object} ICAProtocol
- * @property {(typeUrl: string, value: Uint8Array) => Promise<{typeUrl: string, value: Uint8Array}>} makeICAMsg
- * @property {(msgs: [{typeUrl: string, value: Uint8Array}]) => Promise<Bytes>} makeICAPacket
- * @property {(ack: Bytes) => Promise<void>} assertICAPacketAck
- * @property {(packet: Bytes, connection: Connection) => Promise<string>} sendICAPacket
+ * @property {(msgs: [Msg], connection: Connection) => Promise<string>} sendICATx
  * @property {(port: Port, connectionHandler: object, controllerConnectionId: string, hostConnectionId: string) => Promise<Connection>} createICS27Account
  */
 

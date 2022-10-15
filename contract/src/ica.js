@@ -1,30 +1,10 @@
 // @ts-check
 import { Far } from '@endo/marshal';
 import { assert, details as X } from '@agoric/assert';
-import { encodeBase64 } from '@endo/base64';
+import { encodeBase64, decodeBase64 } from '@endo/base64';
 import { TxBody } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Any } from 'cosmjs-types/google/protobuf/any.js';
 import { E } from '@endo/eventual-send';
-
-// As specified in ICS27, the success result is a base64-encoded '\0x1' byte.
-const ICS27_ICA_SUCCESS_RESULT = 'AQ==';
-
-/**
- * @param {string} s
- */
-const safeJSONParseObject = (s) => {
-  /** @type {unknown} */
-  let obj;
-  try {
-    obj = JSON.parse(s);
-  } catch (e) {
-    assert.note(e, X`${s} is not valid JSON`);
-    throw e;
-  }
-  assert.typeof(obj, 'object', X`${s} is not a JSON object`);
-  assert(obj !== null, X`${s} is null`);
-  return obj;
-};
 
 /**
  * Create an ICA account/channel on the connection provided
@@ -59,34 +39,41 @@ export const createICAAccount = async (
 };
 
 /**
- * Create an interchain transaction from a msg - {type, value}
+ * Provide a connection object and the packet and send ICA Msg's
  *
- * @param {string} typeUrl
- * @param {Uint8Array} value
- * @returns {Promise<Any>}
+ * @param {[Msg]} msgs
+ * @param {Connection} connection
+ * @returns {Promise<string>}
  */
-export const makeMsg = async (typeUrl, value) => {
+export const sendICAPacket = async (msgs, connection) => {
+  var allMsgs = []
   // Asserts/checks
-  assert.typeof(typeUrl, 'string', X`typeUrl ${typeUrl} must be a string`);
+  for (let msg of msgs) {
+    assert.typeof(
+      msg.data,
+      'string',
+      X`data within object must be a base64 encoded string`,
+    );
+    assert.typeof(
+      msg.typeUrl,
+      'string',
+      X`typeUrl within object must be a string of the type`,
+    );
 
-  // Generate the msg.
-  /** @type {Any} */
-  const txmsg = Any.fromPartial({
-    typeUrl,
-    value,
-  });
-  return txmsg;
-};
+    // Convert the base64 string into a uint8array
+    let valueBytes = decodeBase64(msg.data)
 
-/**
- * Create an interchain transaction from a list of msg's
- *
- * @param {[{typeUrl: string, value: Uint8Array}]} msgs
- * @returns {Promise<Bytes>}
- */
-export const makeICS27ICAPacket = async (msgs) => {
+    // Generate the msg.
+    const txmsg = Any.fromPartial({
+      typeUrl: msg.typeUrl,
+      value: valueBytes,
+    });
+    
+    // add the new message to all msg array
+    allMsgs.push(txmsg)
+  }
   const body = TxBody.fromPartial({
-    messages: Array.from(msgs),
+    messages: Array.from(allMsgs),
   });
 
   const buf = TxBody.encode(body).finish();
@@ -99,53 +86,16 @@ export const makeICS27ICAPacket = async (msgs) => {
     memo: '',
   };
 
+    /** @type {Data} */
   const packet = JSON.stringify(ics27);
 
-  return packet;
-};
-
-/**
- * Check the results of the packet.
- *
- * @param {Bytes} ack
- * @returns {Promise<void>}
- */
-export const assertICS27ICAPacketAck = async (ack) => {
-  const { result, error } = safeJSONParseObject(ack);
-  assert(error === undefined, X`ICS27 ICA error ${error}`);
-  assert(result !== undefined, X`ICS27 ICA missing result in ${ack}`);
-  if (result !== ICS27_ICA_SUCCESS_RESULT) {
-    // We don't want to throw an error here, because we want only to be able to
-    // differentiate between a packet that failed and a packet that succeeded.
-    console.warn(`ICS27 ICA succeeded with unexpected result: ${result}`);
-  }
-};
-
-/**
- * Provide a connection object and the packet and send ICA Msg's
- *
- * @param {string} packet
- * @param {Connection} connection
- * @returns {Promise<string>}
- */
-export const sendICAPacket = async (packet, connection) => {
-  // Asserts/checks
-  assert.typeof(
-    JSON.parse(packet),
-    'object',
-    X`packet must be a stringify version of a JSON object`,
-  );
-
-  const res = await connection.send(packet);
+  const res = await E(connection).send(packet);
 
   return res;
 };
 
 /** @type {ICAProtocol} */
 export const ICS27ICAProtocol = Far('ics27-1 ICA protocol', {
-  makeICAMsg: makeMsg,
-  makeICAPacket: makeICS27ICAPacket,
-  assertICAPacketAck: assertICS27ICAPacketAck,
-  sendICAPacket,
+  sendICATx: sendICAPacket,
   createICS27Account: createICAAccount,
 });

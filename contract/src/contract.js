@@ -14,8 +14,6 @@ const start = async () => {
 
   const publicFacet = Far('publicFacet', {
     // Public faucet for anyone to call
-    makeMsg: (/** @type {string} */ typeUrl, /** @type {Uint8Array} */ value) =>
-      ICS27ICAProtocol.makeICAMsg(typeUrl, value),
     createICAAccount: (
       /** @type {Port} */ port,
       /** @type {object} */ connectionHandler,
@@ -28,13 +26,10 @@ const start = async () => {
         controllerConnectionId,
         hostConnectionId,
       ),
-    makeICAPacket: (
-      /** @type {[{typeUrl: string, value: Uint8Array}]} */ msgs,
-    ) => ICS27ICAProtocol.makeICAPacket(msgs),
-    sendICAPacket: (
-      /** @type {Bytes} */ packet,
+    sendICATxPacket: (
+      /** @type {[Msg]} */ msgs,
       /** @type {Connection} */ connection,
-    ) => ICS27ICAProtocol.sendICAPacket(packet, connection),
+    ) => ICS27ICAProtocol.sendICATx(msgs, connection),
   });
 
   return harden({ creatorFacet, publicFacet });
