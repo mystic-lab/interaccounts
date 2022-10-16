@@ -10,4 +10,6 @@ dev
 chain.log
 hermes.log
 agoric.log
-_agstate/
+_agstate/*
+
+!somefolder/.gitkeep 

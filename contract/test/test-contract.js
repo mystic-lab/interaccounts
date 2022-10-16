@@ -39,10 +39,10 @@ const testPublicFacet = async (t) => {
   // Get public faucet from ICA instance
   // Create constant with raw json msg for a GDex swap
   const rawMsg = {
-    amount: [{ denom: 'uatom', amount: '450000' }],
+    amount: [{ denom: 'uaxl', amount: '100000' }],
     fromAddress:
-      'cosmos1h03590djp2jtg7n89pvvak0c73645gpct0nrnzfwhm62vvjzrd5sk20cxg',
-    toAddress: 'cosmos17dtl0mjt3t77kpuhg2edqzjpszulwhgzuj9ljs',
+      'axelar1tw556a6ag5e60wnpgkf970k9nzuugzem33tag2x06e3xlhwsvyzq236pur',
+    toAddress: 'axelar15h7alr3adasctq5k9wrzg5axexl43ler6ryl7p',
   };
   const msgType = MsgSend.fromPartial(rawMsg);
 
