@@ -1,7 +1,6 @@
 node_modules
 defaults.js
 installationConstants.js
-_agstate/yarn-links/
 .idea/
 ui/.cache/
 ui/dist/
@@ -12,4 +11,4 @@ hermes.log
 agoric.log
 _agstate/*
 
-!somefolder/.gitkeep 
+!_agstate/.gitkeep
