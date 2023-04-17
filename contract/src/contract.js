@@ -1,6 +1,6 @@
 // @ts-check
 import '@agoric/zoe/exported.js';
-import { Far } from '@endo/marshal';
+import { Far } from '@endo/marshal/src/make-far.js';
 import { ICS27ICAProtocol } from './ica.js';
 
 /**

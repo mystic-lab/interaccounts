@@ -24,24 +24,25 @@
     "prettier": "^2.1.2"
   },
   "dependencies": {
-    "@agoric/assert": "dev",
+    "@endo/bundle-source": "^2.1.1",
+    "@endo/base64": "^0.2.30",
+    "@agoric/assert": "beta",
+    "@agoric/deploy-script-support": "beta",
+    "@agoric/ertp": "beta",
+    "@endo/eventual-send": "^0.14.8",
+    "@endo/init": "^0.5.37",
+    "@endo/marshal": "^0.6.9",
+    "@agoric/notifier": "beta",
+    "@agoric/store": "beta",
+    "@agoric/zoe": "beta",
     "@agoric/babel-standalone": "^7.17.7",
-    "@agoric/ertp": "dev",
-    "@agoric/notifier": "dev",
-    "@agoric/store": "dev",
-    "@agoric/swingset-vat": "dev",
-    "@agoric/zoe": "dev",
+    "@agoric/swingset-vat": "beta",
     "@cosmjs/encoding": "^0.28.4",
-    "@endo/base64": "^0.2.25",
-    "@endo/bundle-source": "^2.2.0",
-    "@endo/eventual-send": "^0.15.3",
-    "@endo/init": "^0.5.41",
-    "@endo/marshal": "^0.6.7",
     "@endo/promise-kit": "^0.2.42",
     "cosmjs-types": "agoric-labs/cosmjs-types#Agoric-built"
   },
   "resolutions": {
-    "**/protobufjs": "agoric-labs/protobuf.js#Agoric-built"
+    "protobufjs": "agoric-labs/protobuf.js#Agoric-built"
   },
   "ava": {
     "files": [

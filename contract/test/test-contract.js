@@ -2,16 +2,16 @@
 import '@agoric/babel-standalone';
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx.js';
 
-import { test } from '@agoric/zoe/tools/prepare-test-env-ava.js';
+import { test } from './prepare-test-env-ava.js';
 import path from 'path';
 
 import { E } from '@endo/eventual-send';
-import { encodeBase64, decodeBase64 } from '@endo/base64';
+import { encodeBase64 } from '@endo/base64';
 import {
   makeNetworkProtocol,
   makeLoopbackProtocolHandler,
 } from '@agoric/swingset-vat/src/vats/network/index.js';
-import { Far } from '@endo/marshal';
+import { Far } from '@endo/marshal/src/make-far.js';
 import { makePromiseKit } from '@endo/promise-kit';
 import bundleSource from '@endo/bundle-source';
 import { makeFakeVatAdmin } from '@agoric/zoe/tools/fakeVatAdmin.js';
@@ -23,9 +23,7 @@ const dirname = path.dirname(filename);
 const contractPath = `${dirname}/../src/contract.js`;
 
 const testPublicFacet = async (t) => {
-  const { zoeService } = makeZoeKit(makeFakeVatAdmin().admin);
-  const feePurse = E(zoeService).makeFeePurse();
-  const zoe = E(zoeService).bindDefaultFeePurse(feePurse);
+  const { zoeService: zoe } = makeZoeKit(makeFakeVatAdmin().admin);
 
   const bundle = await bundleSource(contractPath);
   const installation = await E(zoe).install(bundle);
