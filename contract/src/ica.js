@@ -4,7 +4,7 @@ import { assert, details as X } from '@agoric/assert';
 import { TxBody } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Any } from 'cosmjs-types/google/protobuf/any.js';
 import { E } from '@endo/eventual-send';
-import { encodeBase64, decodeBase64 } from '@endo/base64';
+import { toBase64, fromBase64 } from '@cosmjs/encoding/build/base64.js';
 
 /**
  * Create an ICA account/channel on the connection provided
@@ -61,7 +61,7 @@ export const sendICAPacket = async (msgs, connection) => {
     );
 
     // Convert the base64 string into a uint8array
-    let valueBytes = decodeBase64(msg.data)
+    let valueBytes = fromBase64(msg.data)
 
     // Generate the msg.
     const txmsg = Any.fromPartial({
@@ -82,7 +82,7 @@ export const sendICAPacket = async (msgs, connection) => {
   /** @type {ICS27ICAPacket} */
   const ics27 = {
     type: 1,
-    data: encodeBase64(buf),
+    data: toBase64(buf),
     memo: '',
   };
 
