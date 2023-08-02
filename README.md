@@ -64,12 +64,20 @@ instance = E(home.zoe).startInstance(installation)
 
 In the local solo repl, run the following commands.
 
+Identify the home.ibcport that has the icacontroller prefix
+```shell
+home.ibcport.then(ps => Promise.all(ps.map(p => E(p).getLocalAddress())))
+```
+
+Replace the position with the number of the icacontroller prefix above, most likely will be the position 2. Remember that it is 0 indexed.
+
 ```javascript
 // Get the ibc port objects list
 home.ibcport
 // Get a port from the port list
-port = history[0][0]
+port = history[0][<position>]
 ```
+
 Set up the connection handlers. Feel free to change as you please.
 
 ```javascript
