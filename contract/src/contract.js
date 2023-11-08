@@ -1,13 +1,15 @@
 // @ts-check
+/* global harden */
 import '@agoric/zoe/exported.js';
-import { Far } from '@endo/marshal/src/make-far.js';
+import '@agoric/network/exported.js';
+import { Far } from '@endo/marshal';
 import { ICS27ICAProtocol } from './ica.js';
 
 /**
  *
  * @type {ContractStartFn}
  */
-const start = async () => {
+const start = () => {
   const creatorFacet = Far('creatorFacet', {
     // The creator of the instance can be called by the creator
   });
