@@ -1,7 +1,6 @@
 // @ts-check
 /* global harden */
 import '@agoric/zoe/exported.js';
-import '@agoric/network/exported.js';
 import { Far } from '@endo/marshal';
 import { ICS27ICAProtocol } from './ica.js';
 

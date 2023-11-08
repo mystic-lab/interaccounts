@@ -10,7 +10,7 @@ import { encodeBase64 } from '@endo/base64';
 import {
   makeNetworkProtocol,
   makeLoopbackProtocolHandler,
-} from '@agoric/swingset-vat/src/vats/network/index.js';
+} from '@agoric/network';
 import { Far } from '@endo/marshal/src/make-far.js';
 import { makePromiseKit } from '@endo/promise-kit';
 import bundleSource from '@endo/bundle-source';
