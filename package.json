@@ -33,7 +33,8 @@
   },
   "resolutions": {
     "protobufjs": "agoric-labs/protobuf.js#Agoric-built",
-    "cosmjs-types": "agoric-labs/cosmjs-types#Agoric-built"
+    "cosmjs-types": "agoric-labs/cosmjs-types#Agoric-built",
+    "@babel/code-frame": "7.18.6"
   },
   "scripts": {
     "preinstall": "node -e \"process.env.AGORIC_INSTALL && process.exit(0); console.warn('please use: agoric install . For details, see https://agoric.com/documentation/'); process.exit(1)\"",
