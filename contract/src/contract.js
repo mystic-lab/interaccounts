@@ -1,9 +1,7 @@
 // @ts-check
-/* global harden */
-import '@agoric/zoe/exported.js';
-import { MessageShape, prepareICS27ICAProtocol } from './ica.js';
 import { makeDurableZone } from '@agoric/zone/durable.js';
 import { M } from '@agoric/store';
+import { MessageShape, prepareICS27ICAProtocol } from './ica.js';
 
 /**
  * @param {unknown} _zcf
@@ -23,6 +21,7 @@ const start = (_zcf, _pa, baggage) => {
     sendICATxPacket: M.call(M.arrayOf(MessageShape), M.any()).returns(M.promise()),
   });
 
+  /** @type {import('./types.js').ICA} */
   const publicFacet = zone.exo('publicFacet', PublicFacetGuard, {
     // Public faucet for anyone to call
     /**

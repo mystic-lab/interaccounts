@@ -37,7 +37,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: Agoric/agoric-sdk
-        branch: mfig-calypso-upgrade
         path: agoric-sdk
         ref: ${{steps.get-branch.outputs.result}}
   

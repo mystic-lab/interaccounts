@@ -1,3 +1,4 @@
+/* eslint-disable node/no-unpublished-import, node/no-missing-import */
 // @ts-check
 /**
  * Like prepare-test-env but also sets up ses-ava and provides
@@ -17,7 +18,9 @@ import { prepareVowTools } from '@agoric/vow';
 /** @typedef {Awaited<ReturnType<makeTestContext>>} Context */
 
 /** @typedef {import('ava').ExecutionContext<Context>} ExecutionContext */
-export const test = /** @type {import('ava').TestInterface<Context>} */ (/** @type {unknown} */ (wrapTest(rawTest)));
+
+/** @type {import('ava').TestInterface<Context>} */
+export const test = wrapTest(/** @type {any} */ (rawTest));
 
 const vowTools = prepareVowTools(makeHeapZone());
 

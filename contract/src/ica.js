@@ -1,3 +1,4 @@
+/* eslint-disable node/no-missing-import */
 // @ts-check
 import { E } from '@endo/far';
 import { M } from '@agoric/store';
@@ -64,11 +65,11 @@ export const prepareICS27ICAProtocol = zone => {
      * @returns {Promise<string>}
      */
     async sendICAPacket(msgs, connection) {
-      var allMsgs = []
+      const allMsgs = []
       // Asserts/checks
-      for (let msg of msgs) {
+      for (const msg of msgs) {
         // Convert the base64 string into a uint8array
-        let valueBytes = fromBase64(msg.data)
+        const valueBytes = fromBase64(msg.data)
 
         // Generate the msg.
         const txmsg = Any.fromPartial({

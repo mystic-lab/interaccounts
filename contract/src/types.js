@@ -1,5 +1,7 @@
 // @ts-check
 
+import '@agoric/zoe/src/types-ambient.js';
+
 /**
  * @import { PromiseVow } from '@agoric/vow';
  * @import { Bytes, Connection, Port } from '@agoric/network';
@@ -29,6 +31,12 @@
  * @typedef {object} ICAProtocol
  * @property {(msgs: Msg[], connection: Connection) => PromiseVow<string>} sendICAPacket
  * @property {(port: Port, connectionHandler: object, controllerConnectionId: string, hostConnectionId: string) => PromiseVow<Connection>} createICAAccount
+ */
+
+/**
+ * @typedef {object} ICA
+ * @property {(port: Port, connectionHandler: object, controllerConnectionId: string, hostConnectionId: string) => Promise<Connection>} createICAAccount
+ * @property {(msgs: Msg[], connection: Connection) => Promise<string>} sendICATxPacket
  */
 
 /**
