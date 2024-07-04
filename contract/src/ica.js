@@ -1,4 +1,3 @@
-/* eslint-disable node/no-missing-import */
 // @ts-check
 import { E } from '@endo/far';
 import { M } from '@agoric/store';

@@ -3,7 +3,6 @@ import '@agoric/babel-standalone';
 // eslint-disable-next-line import/order
 import { test, makeTestContext } from './prepare-test-env-ava.js';
 
-// eslint-disable-next-line node/no-missing-import
 import { MsgSend } from '@agoric/cosmic-proto/cosmos/bank/v1beta1/tx.js';
 
 import path from 'path';
