@@ -4,7 +4,7 @@ import { E } from '@endo/far';
 import { M } from '@agoric/store';
 import { TxBody } from '@agoric/cosmic-proto/cosmos/tx/v1beta1/tx.js';
 import { Any } from '@agoric/cosmic-proto/google/protobuf/any.js';
-import { fromBase64, toBase64 } from '@cosmjs/encoding/build/base64.js';
+import { decodeBase64 as fromBase64, encodeBase64 as toBase64 } from '@endo/base64';
 
 /**
  * @import { Msg, ICAProtocol, ICS27ICAPacket } from './types.js';
