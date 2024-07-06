@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unpublished-import, node/no-missing-import */
 // @ts-check
 /**
  * Like prepare-test-env but also sets up ses-ava and provides
