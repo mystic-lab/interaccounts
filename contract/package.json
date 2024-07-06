@@ -6,43 +6,44 @@
   "type": "module",
   "scripts": {
     "build": "exit 0",
-    "test": "npx ava --verbose",
-    "lint": "eslint '**/*.{js,jsx}'",
+    "test": "ava --verbose",
+    "lint": "yarn lint-check",
     "lint-fix": "eslint --fix '**/*.{js,jsx}'",
     "lint-check": "eslint '**/*.{js,jsx}'",
     "lint-fix-jessie": "eslint -c '.eslintrc-jessie.js' --fix '**/*.{js,jsx}'",
     "lint-check-jessie": "eslint -c '.eslintrc-jessie.js' '**/*.{js,jsx}'"
   },
   "devDependencies": {
-    "ava": "^3.13.0",
-    "eslint": "^7.23.0",
-    "eslint-config-airbnb-base": "^14.0.0",
+    "ava": "^6.1.3",
+    "@endo/ses-ava": "^1.2.2",
+    "eslint": "^8.50.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-jessie": "^0.0.6",
-    "eslint-config-prettier": "^6.12.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^2.1.2"
   },
   "dependencies": {
+    "@agoric/cosmic-proto": "calypso-dev",
+    "@agoric/assert": "agoric-upgrade-16",
+    "@agoric/deploy-script-support": "agoric-upgrade-16",
+    "@agoric/ertp": "agoric-upgrade-16",
+    "@agoric/network": "agoric-upgrade-16",
+    "@agoric/notifier": "agoric-upgrade-16",
+    "@agoric/store": "agoric-upgrade-16",
+    "@agoric/zoe": "agoric-upgrade-16",
+    "@agoric/zone": "agoric-upgrade-16",
+    "@agoric/vow": "agoric-upgrade-16",
+    "@agoric/babel-standalone": "^7.17.7",
     "@endo/bundle-source": "^2.1.1",
     "@endo/base64": "^0.2.30",
-    "@agoric/assert": "beta",
-    "@agoric/deploy-script-support": "beta",
-    "@agoric/ertp": "beta",
+    "@endo/far": "^1.1.2",
     "@endo/eventual-send": "^0.14.8",
     "@endo/init": "^0.5.37",
     "@endo/marshal": "^0.6.9",
-    "@agoric/notifier": "beta",
-    "@agoric/store": "beta",
-    "@agoric/zoe": "beta",
-    "@agoric/babel-standalone": "^7.17.7",
-    "@agoric/swingset-vat": "beta",
-    "@cosmjs/encoding": "^0.28.4",
-    "@endo/promise-kit": "^0.2.42",
-    "cosmjs-types": "agoric-labs/cosmjs-types#Agoric-built"
-  },
-  "resolutions": {
-    "protobufjs": "agoric-labs/protobuf.js#Agoric-built"
+    "@endo/promise-kit": "^0.2.42"
   },
   "ava": {
     "files": [
@@ -64,7 +65,16 @@
   "eslintConfig": {
     "extends": [
       "@agoric"
-    ]
+    ],
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+      "requireConfigFile": false
+    },
+    "settings": {
+      "jsdoc": {
+        "mode": "typescript"
+      }
+    }
   },
   "prettier": {
     "trailingComma": "all",

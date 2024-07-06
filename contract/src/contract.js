@@ -1,39 +1,59 @@
 // @ts-check
-/* global harden */
-import '@agoric/zoe/exported.js';
-import { Far } from '@endo/marshal';
-import { ICS27ICAProtocol } from './ica.js';
+import { makeDurableZone } from '@agoric/zone/durable.js';
+import { M } from '@agoric/store';
+import { MessageShape, prepareICS27ICAProtocol } from './ica.js';
 
 /**
- *
- * @type {ContractStartFn}
+ * @param {unknown} _zcf
+ * @param {unknown} _pa
+ * @param {import('@agoric/swingset-liveslots').Baggage} baggage
  */
-const start = () => {
-  const creatorFacet = Far('creatorFacet', {
-    // The creator of the instance can be called by the creator
+const start = (_zcf, _pa, baggage) => {
+  const zone = makeDurableZone(baggage);
+
+  const makeICS27ICAProtocol = prepareICS27ICAProtocol(zone);
+  const ICS27ICAProtocol = makeICS27ICAProtocol();
+
+  const PublicFacetGuard = M.interface('ICS27ICA', {
+    createICAAccount:
+      M.call(M.remotable('port'), M.any(), M.string(), M.string())
+        .returns(M.promise()),
+    sendICATxPacket: M.call(M.arrayOf(MessageShape), M.any()).returns(M.promise()),
   });
 
-  const publicFacet = Far('publicFacet', {
+  /** @type {import('./types.js').ICA} */
+  const publicFacet = zone.exo('publicFacet', PublicFacetGuard, {
     // Public faucet for anyone to call
+    /**
+     * @param {import('@agoric/network').Port} port
+     * @param {object} connectionHandler
+     * @param {string} controllerConnectionId
+     * @param {string} hostConnectionId
+     */
     createICAAccount: (
-      /** @type {Port} */ port,
-      /** @type {object} */ connectionHandler,
-      /** @type {string} */ controllerConnectionId,
-      /** @type {string} */ hostConnectionId,
+      port,
+      connectionHandler,
+      controllerConnectionId,
+      hostConnectionId,
     ) =>
-      ICS27ICAProtocol.createICS27Account(
+      ICS27ICAProtocol.createICAAccount(
         port,
         connectionHandler,
         controllerConnectionId,
         hostConnectionId,
       ),
+
+    /**
+     * @param {import('./types.js').Msg[]} msgs
+     * @param {import('@agoric/network').Connection} connection 
+     */
     sendICATxPacket: (
-      /** @type {[Msg]} */ msgs,
-      /** @type {Connection} */ connection,
-    ) => ICS27ICAProtocol.sendICATx(msgs, connection),
+      msgs,
+      connection,
+    ) => ICS27ICAProtocol.sendICAPacket(msgs, connection),
   });
 
-  return harden({ creatorFacet, publicFacet });
+  return harden({ publicFacet });
 };
 
 harden(start);

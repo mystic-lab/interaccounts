@@ -12,17 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
     - name: Checkout dapp
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     # Select a branch on agoric-sdk to test against by adding text to the body of the
     # pull request. For example: #agoric-sdk-branch: zoe-release-0.7.0
     # The default is 'master'
     - name: Get the appropriate agoric-sdk branch
       id: get-branch
-      uses: actions/github-script@0.9.0
+      uses: actions/github-script@v7
       with:
         result-encoding: string
         script: |
@@ -34,14 +34,14 @@ jobs:
           return agoricSdkBranch;
 
     - name: Checkout agoric-sdk
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
-        repository: schnetzlerjoe/agoric-sdk
+        repository: Agoric/agoric-sdk
         path: agoric-sdk
         ref: ${{steps.get-branch.outputs.result}}
   
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -55,6 +55,8 @@ jobs:
 
     - name: agoric install
       run: agoric install
+    - name: yarn lint-check
+      run: yarn lint-check
     - name: yarn build
       run: yarn build
     - name: yarn test (everything)

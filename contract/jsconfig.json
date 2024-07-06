@@ -12,7 +12,8 @@
 */
     "downlevelIteration": true,
     "strictNullChecks": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
   },
   "include": ["src/**/*.js", "test/**/*.js", "exported.js", "globals.d.ts"],
 }

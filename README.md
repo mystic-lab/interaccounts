@@ -119,3 +119,7 @@ const res = await E(instance.publicFacet).sendICATxPacket(
     connection,
 );
 ```
+
+## How to upgrade Agoric package resolutions
+
+Run `agoric-sdk/scripts/upgrade-agoric-resolutions.sh` within this directory.
